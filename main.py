@@ -139,7 +139,7 @@ def check_name(update: Update) -> bool:
         tuple('Liteynii', LITEYNII_ALIAS),
         tuple('Home', HOME_ALIAS)
     ]:
-        if msgWords[2].lower() in item[2]:
+        if msgWords[1].lower() in item[2]:
             mikrotikName = item[1]
     
     if mikrotikName == None:
