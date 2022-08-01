@@ -1,3 +1,4 @@
+from tkinter import EXCEPTION
 import routeros_api
 import json
 
@@ -41,3 +42,34 @@ def TryCreateNewSecret(accountName, password, mikrotikCredentials):
     except Exception as e:
         print(e)
         return "Exception"
+
+
+def RouterOSApiPoll(mikrotikCredentials):
+    return routeros_api.RouterOsApiPool(mikrotikCredentials['IP'], username=mikrotikCredentials['username'], password=mikrotikCredentials['password'], plaintext_login=mikrotikCredentials['RouterOsGrater642'])
+
+
+def TryDisableASecret(accountName, mikrotikCredentials):
+    # я не знаю разорвёт ли сборщик мусора соединение
+    RETURNED = 0
+    NO_SUCH_SECRET = 1
+    EXCEPTION = 2
+
+    try:
+        connection = RouterOSApiPoll(mikrotikCredentials)
+        api = connection.get_api()
+        secretsApi = api.get_resource('/ppp/secret/set/?name={secretName}')
+        secretsList = secretsApi.get()
+        
+        returning = NO_SUCH_SECRET
+
+        for secret in secretsList:
+            if secret['name'] == accountName:
+                secretsList.set(secret['id'], name=accountName)
+                returning = RETURNED
+    
+        connection.disconnect
+
+        return returning
+    except Exception as e:
+        print(e)
+        return EXCEPTION

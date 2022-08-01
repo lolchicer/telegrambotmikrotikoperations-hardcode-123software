@@ -1,3 +1,4 @@
+from email import message
 import logging
 import mikrotik
 import secrets
@@ -26,6 +27,8 @@ def main():
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("myid", myID))
     dispatcher.add_handler(CommandHandler("create", create))
+
+    dispatcher.add_handler(CommandHandler("suspend", disable))
 
 
     # Start the Bot
@@ -66,16 +69,22 @@ def create(update: Update, context: CallbackContext) -> None:
 
     clientEmail = msgWords[1]
     
-    reshetnikovaAlias = ['reshetnikova', 'resh', 'r']
-    liteyniiAlias = ['liteynii', 'liteinii', 'litei', 'l', 'litey', 'lit']
-    if msgWords[2].lower() in reshetnikovaAlias:
-        mikrotikName = 'Reshetnikova'
-    else:
-        if msgWords[2].lower() in liteyniiAlias:
-            mikrotikName = 'Liteynii'
-        else:
-            update.message.reply_markdown_v2('Server doesn\'t recognize this name of Mikrotik\. Try another one')
-            return
+    RESHETNIKOVA_ALIAS = ['reshetnikova', 'resh', 'r']
+    LITEYNII_ALIAS = ['liteynii', 'liteinii', 'litei', 'l', 'litey', 'lit']
+    HOME_ALIAS = ['home', 'h']
+
+    for item in [
+        tuple('Reshetnikova', RESHETNIKOVA_ALIAS),
+        tuple('Liteynii', LITEYNII_ALIAS),
+        tuple('Home', HOME_ALIAS)
+    ]:
+        if msgWords[2].lower() in item[2]:
+            mikrotikName = item[1]
+    
+    if mikrotikName == None:
+        update.message.reply_markdown_v2('Server doesn\'t recognize this name of Mikrotik\. Try another one')
+        return
+            
 
     mikrotikCredentials = mikrotik.TryGetMikrotikCredentials(mikrotikName)
     if mikrotikCredentials == False:
@@ -104,7 +113,69 @@ def create(update: Update, context: CallbackContext) -> None:
     update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is created\. Mail has sended to the Client\.')
 
 
+def check_permission(update: Update) -> bool:
+    user = update.effective_user
+    
+    autheticatedIDs = TryGetAutheticatedIDs()
+    if autheticatedIDs == False:
+        update.message.reply_markdown_v2('Server doesn\'t have file with authenticated IDs or get some error, sorry.')
+        return False
+    if user.id not in autheticatedIDs['IDs']:
+        update.message.reply_markdown_v2('You don\'t have permissions to do this\.')        
+        return False
+    
+    return True
 
+
+def check_name(update: Update) -> bool:
+    RESHETNIKOVA_ALIAS = ['reshetnikova', 'resh', 'r']
+    LITEYNII_ALIAS = ['liteynii', 'liteinii', 'litei', 'l', 'litey', 'lit']
+    HOME_ALIAS = ['home', 'h']
+
+    msgWords = update.message.text.split()
+    
+    for item in [
+        tuple('Reshetnikova', RESHETNIKOVA_ALIAS),
+        tuple('Liteynii', LITEYNII_ALIAS),
+        tuple('Home', HOME_ALIAS)
+    ]:
+        if msgWords[2].lower() in item[2]:
+            mikrotikName = item[1]
+    
+    if mikrotikName == None:
+        update.message.reply_markdown_v2('Server doesn\'t recognize this name of Mikrotik\. Try another one')
+    
+    return mikrotikName
+
+
+def check_credentials(update: Update) -> bool:
+    mikrotikName = check_name(update)
+
+    if mikrotikName == None:
+        return
+    
+    mikrotikCredentials = mikrotik.TryGetMikrotikCredentials(mikrotikName)
+    if mikrotikCredentials == False:
+        update.message.reply_markdown_v2('Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.')
+    
+    return mikrotikCredentials
+
+
+def disable(update: Update, context: CallbackContext) -> None:
+    if not check_permission(update):
+        return
+    
+    mikrotikCredentials = check_credentials(update)
+    
+    disable = mikrotik.TryDisableASecret(mikrotikCredentials)
+    
+    if disable == 0:
+        update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\.')
+    if disable == 1:
+        update.message.reply_markdown_v2('No such account exists on this Mikrotik\.')
+    if disable == 2:
+        update.message.reply_markdown_v2('Some exception has thrown when bot try to create and check new account\.\r\nNEED TO MAINTENANCE THE BOT')
+    
 
 def TryGetAutheticatedIDs():
     try:
