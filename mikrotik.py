@@ -1,6 +1,18 @@
 import routeros_api
 import json
 
+def FindMikrotikName(mikrotikAliasItem):
+    mikrotikName = None
+    
+    with open('mikrotiksAliases.json') as f:
+        mikrotiksAliases = json.load(f)
+        
+        for name, alias in zip(mikrotiksAliases.keys(), mikrotiksAliases.values()):
+            if mikrotikAliasItem in alias:
+                mikrotikName = name
+    
+    return mikrotikName
+
 def TryGetMikrotikCredentials(mikrotikName):
     try:
         with open('Mikrotiks Credentials/' + mikrotikName + '.json') as f:

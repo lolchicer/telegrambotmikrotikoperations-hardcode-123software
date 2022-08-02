@@ -66,17 +66,11 @@ def create(update: Update, context: CallbackContext) -> None:
 
     clientEmail = msgWords[1]
     
-    reshetnikovaAlias = ['reshetnikova', 'resh', 'r']
-    liteyniiAlias = ['liteynii', 'liteinii', 'litei', 'l', 'litey', 'lit']
-    if msgWords[2].lower() in reshetnikovaAlias:
-        mikrotikName = 'Reshetnikova'
-    else:
-        if msgWords[2].lower() in liteyniiAlias:
-            mikrotikName = 'Liteynii'
-        else:
-            update.message.reply_markdown_v2('Server doesn\'t recognize this name of Mikrotik\. Try another one')
-            return
-
+    mikrotikName = mikrotik.FindMikrotikName(msgWords[2].lower())
+    if mikrotikName == None:
+        update.message.reply_markdown_v2('Server doesn\'t recognize this name of Mikrotik\. Try another one')
+        return
+    
     mikrotikCredentials = mikrotik.TryGetMikrotikCredentials(mikrotikName)
     if mikrotikCredentials == False:
         update.message.reply_markdown_v2('Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.')
