@@ -13,6 +13,12 @@ def FindMikrotikName(mikrotikAliasItem):
     
     return mikrotikName
 
+
+def GetMikrotikDefaultSettings(mikrotikName):
+    with open('Mikrotiks Default Settings/' + mikrotikName + '.json') as f:
+        return json.load(f)
+
+
 def TryGetMikrotikCredentials(mikrotikName):
     try:
         with open('Mikrotiks Credentials/' + mikrotikName + '.json') as f:
@@ -27,7 +33,7 @@ def TryGetMikrotikCredentials(mikrotikName):
         return False
     
 
-def TryCreateNewSecret(accountName, password, mikrotikCredentials):
+def TryCreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
     try:
         connection = routeros_api.RouterOsApiPool(mikrotikCredentials['IP'], username=mikrotikCredentials['username'], password=mikrotikCredentials['password'], plaintext_login=mikrotikCredentials['RouterOsGrater642'])
         api = connection.get_api()
@@ -36,7 +42,7 @@ def TryCreateNewSecret(accountName, password, mikrotikCredentials):
         for secret in secretsList:
             if secret["name"]== accountName:
                 return "Exist"
-        secretsApi.add(name=accountName, password=password, service="l2tp", profile="l2tp_profile")
+        secretsApi.add(name=accountName, password=password, **GetMikrotikDefaultSettings(mikrotikName))
         connection.disconnect()
 
         #check creation

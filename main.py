@@ -78,7 +78,7 @@ def create(update: Update, context: CallbackContext) -> None:
 
     newAccountPassword = GeneratePassword20()
 
-    created = mikrotik.TryCreateNewSecret(clientEmail, newAccountPassword, mikrotikCredentials)
+    created = mikrotik.TryCreateNewSecret(clientEmail, newAccountPassword, mikrotikName, mikrotikCredentials)
     if created == 'Exist':
         update.message.reply_markdown_v2('This account already exist on this Mikrotik\.')
         return
