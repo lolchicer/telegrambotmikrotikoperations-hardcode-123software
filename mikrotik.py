@@ -31,6 +31,12 @@ def TryGetMikrotikCredentials(mikrotikName):
             return json_data
     except (FileNotFoundError, KeyError):
         return False
+
+
+class ExistingException(Exception):
+    message = 'This account already exist on this Mikrotik\.'
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
     
 
 def TryCreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
@@ -41,7 +47,7 @@ def TryCreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials)
         secretsList = secretsApi.get()
         for secret in secretsList:
             if secret["name"]== accountName:
-                return "Exist"
+                raise ExistingException()
         secretsApi.add(name=accountName, password=password, **GetMikrotikDefaultSettings(mikrotikName))
         connection.disconnect()
 

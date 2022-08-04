@@ -100,6 +100,15 @@ def create(update: Update, context: CallbackContext) -> None:
 
 
 
+def error_handle(update: Update, context: CallbackContext):
+    error = context.error
+    if type(error) == mikrotik.ExistingException:
+        error = mikrotik.ExistingException(error) 
+        update.message.reply_markdown_v2(error.message)
+        return
+        
+    raise error
+
 def TryGetAutheticatedIDs():
     try:
         with open('autheticatedIDs.json') as f:
