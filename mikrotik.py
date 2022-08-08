@@ -28,6 +28,7 @@ def FindMikrotikName(mikrotikAliasItem):
 
 class NoMikrotikDefaultSettingsException(Exception):
     message = 'Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.'
+
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 
@@ -39,16 +40,17 @@ def GetMikrotikDefaultSettings(mikrotikName):
 
 class NoMikrotikCredentialsException(Exception):
     message = 'Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.'
+
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 
 
 def GetMikrotikCredentials(mikrotikName):
     mikrotikPath = 'Mikrotiks Credentials/' + mikrotikName + '.json'
-    
+
     if not os.path.exists(mikrotikPath):
         raise NoMikrotikCredentialsException()
-    
+
     with open(mikrotikPath) as f:
         json_data = json.load(f)
         tmp = json_data['IP']
