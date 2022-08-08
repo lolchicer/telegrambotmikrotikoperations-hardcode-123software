@@ -108,28 +108,24 @@ def RouterOSApiPoll(mikrotikCredentials):
     return routeros_api.RouterOsApiPool(mikrotikCredentials['IP'], username=mikrotikCredentials['username'], password=mikrotikCredentials['password'], plaintext_login=mikrotikCredentials['RouterOsGrater642'])
 
 
-def TryDisableASecret(accountName, mikrotikCredentials):
+def DisableASecret(accountName, mikrotikCredentials):
     # я не знаю разорвёт ли сборщик мусора соединение
     RETURNED = 0
     NO_SUCH_SECRET = 1
     EXCEPTION = 2
 
-    try:
-        connection = RouterOSApiPoll(mikrotikCredentials)
-        api = connection.get_api()
-        secretsApi = api.get_resource('/ppp/secret/set/?name={secretName}')
-        secretsList = secretsApi.get()
+    connection = RouterOSApiPoll(mikrotikCredentials)
+    api = connection.get_api()
+    secretsApi = api.get_resource('/ppp/secret/set/?name={secretName}')
+    secretsList = secretsApi.get()
         
-        returning = NO_SUCH_SECRET
+    returning = NO_SUCH_SECRET
 
-        for secret in secretsList:
-            if secret['name'] == accountName:
-                secretsList.set(secret['id'], name=accountName)
-                returning = RETURNED
-    
-        connection.disconnect
+    for secret in secretsList:
+        if secret['name'] == accountName:
+            secretsList.set(secret['id'], name=accountName)
+            returning = RETURNED
 
-        return returning
-    except Exception as e:
-        print(e)
-        return EXCEPTION
+    connection.disconnect
+
+    return returning

@@ -107,14 +107,10 @@ class NoAuthenticatedIDs(Exception):
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
 
-    disable = mikrotik.TryDisableASecret(mikrotikCredentials)
-
-def GetAutheticatedIDs():
-    authenticatedIDs = 'autheticatedIDs.json'
 def check_permission(update: Update) -> bool:
     user = update.effective_user
     
-    autheticatedIDs = TryGetAutheticatedIDs()
+    autheticatedIDs = GetAutheticatedIDs()
     if autheticatedIDs == False:
         update.message.reply_markdown_v2('Server doesn\'t have file with authenticated IDs or get some error, sorry.')
         return False
@@ -173,6 +169,10 @@ def disable(update: Update, context: CallbackContext) -> None:
         update.message.reply_markdown_v2('No such account exists on this Mikrotik\.')
     if disable == 2:
         update.message.reply_markdown_v2('Some exception has thrown when bot try to create and check new account\.\r\nNEED TO MAINTENANCE THE BOT')
+
+
+def GetAutheticatedIDs():
+    authenticatedIDs = 'autheticatedIDs.json'
     
     if not os.path.exists(authenticatedIDs):
         raise NoAuthenticatedIDs()
