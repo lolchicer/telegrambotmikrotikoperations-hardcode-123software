@@ -2,8 +2,7 @@ from email import message
 import logging
 import os
 import configFunctions
-import errorFunctions
-import mikrotik
+import errorHandling
 import commands
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
@@ -22,10 +21,10 @@ def main():
 
     dispatcher = updater.dispatcher
 
-    dispatcher.add_error_handler(errorFunctions.error_handle)
+    dispatcher.add_error_handler(errorHandling.errorHandle)
 
     dispatcher.add_handler(CommandHandler("start", commands.start))
-    dispatcher.add_handler(CommandHandler("myid", commands.myID))
+    dispatcher.add_handler(CommandHandler("myid", commands.myId))
     dispatcher.add_handler(CommandHandler("create", commands.create))
     dispatcher.add_handler(CommandHandler("suspend", commands.disable))
 

@@ -1,13 +1,13 @@
 import configFunctions
-import mikrotik
+import mikrotikFunctions
 from telegram import Update
 from telegram.ext import CallbackContext
 
 
-def error_handle(update: Update, context: CallbackContext):
+def errorHandle(update: Update, context: CallbackContext):
     error = context.error
-    if type(error) == mikrotik.ExistingException:
-        error = mikrotik.ExistingException(error)
+    if type(error) == mikrotikFunctions.ExistingException:
+        error = mikrotikFunctions.ExistingException(error)
         update.message.reply_markdown_v2(error.message)
         return
 
@@ -16,21 +16,21 @@ def error_handle(update: Update, context: CallbackContext):
     print(error)
 
 
-def check_permission(update: Update) -> bool:
+def checkPermission(update: Update) -> bool:
     user = update.effective_user
     
-    autheticatedIDs = configFunctions.GetAutheticatedIDs()
-    if autheticatedIDs == False:
+    autheticatedIds = configFunctions.GetAutheticatedIds()
+    if autheticatedIds == False:
         update.message.reply_markdown_v2('Server doesn\'t have file with authenticated IDs or get some error, sorry.')
         return False
-    if user.id not in autheticatedIDs['IDs']:
+    if user.id not in autheticatedIds['IDs']:
         update.message.reply_markdown_v2('You don\'t have permissions to do this\.')        
         return False
     
     return True
 
 
-def check_name(update: Update) -> bool:
+def checkName(update: Update) -> bool:
     RESHETNIKOVA_ALIAS = ['reshetnikova', 'resh', 'r']
     LITEYNII_ALIAS = ['liteynii', 'liteinii', 'litei', 'l', 'litey', 'lit']
     HOME_ALIAS = ['home', 'h']
@@ -51,13 +51,13 @@ def check_name(update: Update) -> bool:
     return mikrotikName
 
 
-def check_credentials(update: Update) -> bool:
-    mikrotikName = check_name(update)
+def checkCredentials(update: Update) -> bool:
+    mikrotikName = checkName(update)
 
     if mikrotikName == None:
         return
     
-    mikrotikCredentials = mikrotik.TryGetMikrotikCredentials(mikrotikName)
+    mikrotikCredentials = mikrotikFunctions.TryGetMikrotikCredentials(mikrotikName)
     if mikrotikCredentials == False:
         update.message.reply_markdown_v2('Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.')
     

@@ -1,7 +1,7 @@
 import mailFunctions
 import configFunctions
-import errorFunctions
-import mikrotik
+import mikrotikFunctions
+import errorHandling
 from telegram import Update
 from telegram.ext import CallbackContext
 
@@ -12,7 +12,7 @@ def start(update: Update, context: CallbackContext) -> None:
     update.message.reply_markdown_v2(fr'Hi {user.mention_markdown_v2()}\!')
 
 
-def myID(update: Update, context: CallbackContext) -> None:
+def myId(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
     update.message.reply_markdown_v2(
         f'SO WHAT DO YOU WANT, SEXY? \r\nYour ID is {user.id}')
@@ -21,8 +21,8 @@ def myID(update: Update, context: CallbackContext) -> None:
 def create(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
 
-    autheticatedIDs = configFunctions.GetAutheticatedIDs()
-    if user.id not in autheticatedIDs['IDs']:
+    autheticatedIds = configFunctions.GetAutheticatedIds()
+    if user.id not in autheticatedIds['IDs']:
         update.message.reply_markdown_v2(
             'You don\'t have permissions to do this\.')
         return
@@ -39,15 +39,15 @@ def create(update: Update, context: CallbackContext) -> None:
 
     clientEmail = msgWords[1]
 
-    mikrotikName = mikrotik.FindMikrotikName(msgWords[2].lower())
+    mikrotikName = mikrotikFunctions.FindMikrotikName(msgWords[2].lower())
 
-    mikrotikCredentials = mikrotik.GetMikrotikCredentials(mikrotikName)
+    mikrotikCredentials = mikrotikFunctions.GetMikrotikCredentials(mikrotikName)
 
     newAccountPassword = configFunctions.GeneratePassword20()
 
     return mikrotikCredentials
 
-    mikrotik.CreateNewSecret(
+    mikrotikFunctions.CreateNewSecret(
         clientEmail, newAccountPassword, mikrotikName, mikrotikCredentials)
 
     mailFunctions.SendAccountInfoToClient(
@@ -58,12 +58,12 @@ def create(update: Update, context: CallbackContext) -> None:
 
 
 def disable(update: Update, context: CallbackContext) -> None:
-    if not errorFunctions.check_permission(update):
+    if not errorHandling.checkPermission(update):
         return
     
-    mikrotikCredentials = errorFunctions.check_credentials(update)
+    mikrotikCredentials = errorHandling.checkCredentials(update)
     
-    disable = mikrotik.TryDisableASecret(mikrotikCredentials)
+    disable = mikrotikFunctions.TryDisableASecret(mikrotikCredentials)
     
     if disable == 0:
         update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\.')
