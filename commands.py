@@ -19,39 +19,20 @@ def myId(update: Update, context: CallbackContext) -> None:
 
 
 def create(update: Update, context: CallbackContext) -> None:
-    user = update.effective_user
+    errorHandling.checkPermission(update)
+    
+    msgWords = errorHandling.createMsgWords(update)
 
-    autheticatedIds = configFunctions.GetAutheticatedIds()
-    if user.id not in autheticatedIds['IDs']:
-        update.message.reply_markdown_v2(
-            'You don\'t have permissions to do this\.')
-        return
-
-    msgWords = update.message.text.split()
-    if len(msgWords) != 3:
-        update.message.reply_markdown_v2(
-            'You should send email and mikrotik name\!\r\nExample: /create info@mail\.ru reshetnikova')
-        return
-    if not mailFunctions.ValidateEmail(msgWords[1]):
-        update.message.reply_markdown_v2(
-            'First argument must be the email address\.\r\nExample: /create info@mail\.ru reshetnikova')
-        return
-
-    clientEmail = msgWords[1]
-
+    newAccountEmail = msgWords[1]
+    newAccountPassword = configFunctions.GeneratePassword20()
     mikrotikName = mikrotikFunctions.FindMikrotikName(msgWords[2].lower())
-
     mikrotikCredentials = mikrotikFunctions.GetMikrotikCredentials(mikrotikName)
 
-    newAccountPassword = configFunctions.GeneratePassword20()
-
-    return mikrotikCredentials
-
     mikrotikFunctions.CreateNewSecret(
-        clientEmail, newAccountPassword, mikrotikName, mikrotikCredentials)
+        newAccountEmail, newAccountPassword, mikrotikName, mikrotikCredentials)
 
     mailFunctions.SendAccountInfoToClient(
-        clientEmail, newAccountPassword, mikrotikCredentials['presharedKey'], mikrotikCredentials['IP'])
+        newAccountEmail, newAccountPassword, mikrotikCredentials['presharedKey'], mikrotikCredentials['IP'])
 
     update.message.reply_markdown_v2(
         '\!\!\!SUCCESS\!\!\!\r\nAccout is created\. Mail has sended to the Client\.')
