@@ -77,6 +77,8 @@ def create(update: Update, context: CallbackContext) -> None:
 
     mikrotikCredentials = mikrotik.GetMikrotikCredentials(mikrotikName)
 
+    newAccountPassword = GeneratePassword20()
+
     return mikrotikCredentials
 
     mikrotik.CreateNewSecret(
