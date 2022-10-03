@@ -8,9 +8,6 @@ from telegram.ext import CallbackContext
 class NoPermission(Exception):
     message = 'You don\'t have permissions to do this\.'
 
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
-
 
 def checkPermission(update: Update) -> None:
     user = update.effective_user
@@ -57,15 +54,9 @@ def checkCredentials(update: Update) -> bool:
 class InvalidCreateMsgWordsFormat(Exception):
     message = 'You should send email and mikrotik name\!\r\nExample: /create info@mail\.ru reshetnikova'
 
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
-
 
 class InvalidCreateEmailFormat(Exception):
     message = 'First argument must be the email address\.\r\nExample: /create info@mail\.ru reshetnikova'
-
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
 
 
 def createMsgWords(update: Update) -> list[str]:

@@ -16,10 +16,6 @@ def ValidateEmail(email):
 class CannotSendAccountInfoToClientException(Exception):
     message = 'Account is created\.\r\nBUT\! Some problem was caused with sending email to client\.\r\nNEED TO SEND CREDS MANUALY'
 
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
-
-
 def SendAccountInfoToClient(accountName, accountPassword, presharedKey, IP):
     body = """Добрый день!
 
