@@ -79,11 +79,10 @@ def createMsgWords(update: Update) -> list[str]:
 
 def errorHandle(update: Update, context: CallbackContext):
     error = context.error
-    if type(error) == mikrotikFunctions.ExistingException:
-        error = mikrotikFunctions.ExistingException(error)
-        update.message.reply_markdown_v2(error.message)
-        return
-
-    update.message.reply_markdown_v2(
-        'Some exception has thrown\.\r\nNEED TO MAINTENANCE THE BOT')
+    
+    if error.message == None:
+        update.message.reply_markdown_v2('Some exception has thrown\.\r\nNEED TO MAINTENANCE THE BOT')
+    
+    update.message.reply_markdown_v2(error.message)
+    
     print(error)
