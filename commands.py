@@ -39,16 +39,10 @@ def create(update: Update, context: CallbackContext) -> None:
 
 
 def disable(update: Update, context: CallbackContext) -> None:
-    if not errorHandling.checkPermission(update):
-        return
+    errorHandling.checkPermission(update)
     
     mikrotikCredentials = errorHandling.checkCredentials(update)
     
-    disable = mikrotikFunctions.DisableASecret(mikrotikCredentials)
+    mikrotikFunctions.DisableASecret(mikrotikCredentials)
     
-    if disable == 0:
-        update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\.')
-    if disable == 1:
-        update.message.reply_markdown_v2('No such account exists on this Mikrotik\.')
-    if disable == 2:
-        update.message.reply_markdown_v2('Some exception has thrown when bot try to create and check new account\.\r\nNEED TO MAINTENANCE THE BOT')
+    update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\.')
