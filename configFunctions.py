@@ -5,7 +5,7 @@ import string
 
 
 class NoAuthenticatedIds(Exception):
-    message = 'Server doesn\'t have file with authenticated IDs or get some error, sorry.'
+    message = 'Server doesn\'t have file with authenticated IDs or get some error, sorry\.'
 
     def __init__(self, *args: object) -> None:
         super().__init__(*args)
