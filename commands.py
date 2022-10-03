@@ -44,7 +44,7 @@ def disable(update: Update, context: CallbackContext) -> None:
     
     mikrotikCredentials = errorHandling.checkCredentials(update)
     
-    disable = mikrotikFunctions.TryDisableASecret(mikrotikCredentials)
+    disable = mikrotikFunctions.DisableASecret(mikrotikCredentials)
     
     if disable == 0:
         update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\.')
