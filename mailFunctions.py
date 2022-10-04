@@ -2,15 +2,9 @@ import sys
 import json
 import smtplib
 import ssl
-import re
 import os.path
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-
-
-def ValidateEmail(email):
-    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
-    return re.fullmatch(regex, email)
 
 
 class CannotSendAccountInfoToClientException(Exception):
@@ -39,6 +33,57 @@ def SendAccountInfoToClient(accountName, accountPassword, presharedKey, IP):
     body = body.replace('login', accountName)
     body = body.replace('password', accountPassword)
     body = body.replace('preshared', presharedKey)
+    body = body.replace('IPadd', IP)
+    return SendEmailToClient(accountName, "Доступ к VPN", body)
+
+
+def SendNewPasswordToClent(accountName, accountPassword, IP):
+    body = """Добрый день!
+    
+    Пароль вашей учётной записи login для подключения к VPN по адресу IPadd был изменён:
+    
+    password"""
+
+    body = body.replace('login', accountName)
+    body = body.replace('password', accountPassword)
+    body = body.replace('IPadd', IP)
+    return SendEmailToClient(accountName, "Доступ к VPN", body)
+
+
+def SendDisablingNotificationToClent(accountName, IP):
+    body = """Добрый день!
+    
+    Действие вашей учётной записи login для подключения к VPN по адресу IPadd было приостановлено."""
+
+    body = body.replace('login', accountName)
+    body = body.replace('IPadd', IP)
+    return SendEmailToClient(accountName, "Доступ к VPN", body)
+
+
+def SendEnablingNotificationToClent(accountName, accountPassword, presharedKey, IP):
+    body = """Добрый день!
+    
+    Действие вашей учётной записи login для подключения к VPN по адресу IPadd было восстановлено:
+    
+    Новый пароль: password
+    Новый предварительный ключ: preshared"""
+
+    body = body.replace('login', accountName)
+    body = body.replace('password', accountPassword)
+    body = body.replace('preshared', presharedKey)
+    body = body.replace('IPadd', IP)
+    return SendEmailToClient(accountName, "Доступ к VPN", body)
+
+
+def SendNewPasswordToClent(accountName, accountPassword, IP):
+    body = """Добрый день!
+    
+    Пароль вашей учётной записи login для подключения к VPN по адресу IPadd был изменён:
+    
+    password"""
+
+    body = body.replace('login', accountName)
+    body = body.replace('password', accountPassword)
     body = body.replace('IPadd', IP)
     return SendEmailToClient(accountName, "Доступ к VPN", body)
 
