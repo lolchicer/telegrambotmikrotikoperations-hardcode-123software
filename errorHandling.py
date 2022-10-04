@@ -51,23 +51,6 @@ def checkCredentials(update: Update) -> bool:
     return mikrotikCredentials
 
 
-class InvalidCreateMsgWordsFormat(Exception):
-    message = 'You should send email and mikrotik name\!\r\nExample: /create info@mail\.ru reshetnikova'
-
-
-class InvalidCreateEmailFormat(Exception):
-    message = 'First argument must be the email address\.\r\nExample: /create info@mail\.ru reshetnikova'
-
-
-def createMsgWords(update: Update) -> list[str]:
-    msgWords = update.message.text.split()
-    if len(msgWords) != 3:
-        raise InvalidCreateMsgWordsFormat()
-
-    if not mailFunctions.ValidateEmail(msgWords[1]):
-        raise InvalidCreateEmailFormat()
-
-
 def errorHandle(update: Update, context: CallbackContext):
     error = context.error
     

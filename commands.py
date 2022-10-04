@@ -1,5 +1,6 @@
-import mailFunctions
 import configFunctions
+import formattingFunctions
+import mailFunctions
 import mikrotikFunctions
 import errorHandling
 from telegram import Update
@@ -21,12 +22,14 @@ def myId(update: Update, context: CallbackContext) -> None:
 def create(update: Update, context: CallbackContext) -> None:
     errorHandling.checkPermission(update)
     
-    msgWords = errorHandling.createMsgWords(update)
+    msgWords = update.message.text.split()
+
+    formattingFunctions.ValidateMsgWords(msgWords, [formattingFunctions.PLAIN, formattingFunctions.EMAIL, formattingFunctions.PLAIN])
 
     newAccountEmail = msgWords[1]
     newAccountPassword = configFunctions.GeneratePassword20()
-    mikrotikName = mikrotikFunctions.FindMikrotikName(msgWords[2].lower())
-    mikrotikCredentials = mikrotikFunctions.GetMikrotikCredentials(mikrotikName)
+    mikrotikName = configFunctions.GetMikrotikName(msgWords[2].lower())
+    mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
 
     mikrotikFunctions.CreateNewSecret(
         newAccountEmail, newAccountPassword, mikrotikName, mikrotikCredentials)
@@ -40,9 +43,20 @@ def create(update: Update, context: CallbackContext) -> None:
 
 def disable(update: Update, context: CallbackContext) -> None:
     errorHandling.checkPermission(update)
-    
-    mikrotikCredentials = errorHandling.checkCredentials(update)
-    
-    mikrotikFunctions.DisableASecret(mikrotikCredentials)
+
+    msgWords = update.message.text.split()
+
+    formattingFunctions.ValidateMsgWords(msgWords, [formattingFunctions.PLAIN, formattingFunctions.EMAIL, formattingFunctions.PLAIN])
+
+    newAccountEmail = msgWords[1]
+    newAccountPassword = configFunctions.GeneratePassword20()
+    mikrotikName = configFunctions.GetMikrotikName(msgWords[2].lower())
+    mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
+
+    mikrotikFunctions.DisableASecret(
+        newAccountEmail, newAccountPassword, mikrotikName, mikrotikCredentials)
+
+    mailFunctions.SendAccountInfoToClient(
+        newAccountEmail, newAccountPassword, mikrotikCredentials['presharedKey'], mikrotikCredentials['IP'])
     
     update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\.')
