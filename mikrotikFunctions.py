@@ -88,4 +88,4 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
 
 
 def DisableASecret(name, mikrotikCredentials) -> None:
-    EditSecret(mikrotikCredentials, name, {'disabled': 'yes'})
+    EditSecret(mikrotikCredentials, name, **{'disabled': 'yes'})
