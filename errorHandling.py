@@ -71,9 +71,9 @@ def createMsgWords(update: Update) -> list[str]:
 def errorHandle(update: Update, context: CallbackContext):
     error = context.error
     
-    if error.message == None:
+    try:
+        update.message.reply_markdown_v2(error.message)
+    except Exception:
         update.message.reply_markdown_v2('Some exception has thrown\.\r\nNEED TO MAINTENANCE THE BOT')
-    
-    update.message.reply_markdown_v2(error.message)
-    
-    print(error)
+    finally:
+        print(error)
