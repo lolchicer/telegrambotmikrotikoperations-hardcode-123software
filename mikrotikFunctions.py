@@ -1,5 +1,3 @@
-from tkinter import EXCEPTION
-from typing import Any
 import routeros_api
 import configFunctions
 
