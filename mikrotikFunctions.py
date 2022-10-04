@@ -2,6 +2,12 @@ import routeros_api
 import configFunctions
 
 
+def Connect(mikrotikCredentails):
+    connection = routeros_api.RouterOsApiPool(**mikrotikCredentails)
+    connection.get_api()
+    connection.disconnect()
+
+
 class ExistingException(Exception):
     message = 'This account already exist on this Mikrotik\.'
 

@@ -16,7 +16,6 @@ def GetAutheticatedIds():
 
     with open(authenticatedIds) as f:
         json_data = json.load(f)
-        tmp = json_data['IDs']
         return json_data
 
 
@@ -25,7 +24,6 @@ def GetBotCredentials():
 
     with open(botCredentials) as f:
         json_data = json.load(f)
-        tmp = json_data['token']
         return json_data
 
 
@@ -55,11 +53,6 @@ def GetMikrotikCredentials(mikrotikName):
 
     with open(mikrotikPath) as f:
         json_data = json.load(f)
-        tmp = json_data['IP']
-        tmp = json_data['username']
-        tmp = json_data['password']
-        tmp = json_data['presharedKey']
-        tmp = json_data['RouterOsGrater642']
         return json_data
 
 

@@ -25,6 +25,7 @@ def main():
 
     dispatcher.add_handler(CommandHandler("start", commands.start))
     dispatcher.add_handler(CommandHandler("myid", commands.myId))
+    dispatcher.add_handler(CommandHandler("connect", commands.connect))
     dispatcher.add_handler(CommandHandler("create", commands.create))
     dispatcher.add_handler(CommandHandler("disable", commands.disable))
 

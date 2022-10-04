@@ -18,6 +18,16 @@ def myId(update: Update, context: CallbackContext) -> None:
         f'SO WHAT DO YOU WANT, SEXY? \r\nYour ID is {user.id}')
 
 
+def connect(update: Update, context: CallbackContext) -> None:
+    errorHandling.checkPermission(update)
+
+    msgWords = update.message.text.split()
+    
+    mikrotikCredentials = configFunctions.GetMikrotikCredentials(msgWords[1])
+
+    mikrotikFunctions.Connect(mikrotikCredentials)
+
+
 def create(update: Update, context: CallbackContext) -> None:
     errorHandling.checkPermission(update)
     
