@@ -4,5 +4,6 @@ venv
 botCredentials.json
 autheticatedIDs.json
 mikrotiksAliases.json
-Mikrotiks Credentials
+Mikrotiks Credentials/*
+!Mikrotiks Credentials/credentials' fields.json
 Mikrotiks Default Settings
