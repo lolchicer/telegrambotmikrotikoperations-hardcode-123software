@@ -26,7 +26,7 @@ def main():
     dispatcher.add_handler(CommandHandler("start", commands.start))
     dispatcher.add_handler(CommandHandler("myid", commands.myId))
     dispatcher.add_handler(CommandHandler("create", commands.create))
-    dispatcher.add_handler(CommandHandler("suspend", commands.disable))
+    dispatcher.add_handler(CommandHandler("disable", commands.disable))
 
     # Start the Bot
     updater.start_polling()
