@@ -56,3 +56,13 @@ def disable(update: Update, context: CallbackContext) -> None:
     mikrotikFunctions.DisableASecret(mikrotikCredentials)
     
     update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\.')
+
+
+def enable(update: Update, context: CallbackContext) -> None:
+    errorHandling.checkPermission(update)
+
+    mikrotikCredentials = errorHandling.checkCredentials(update)
+
+    mikrotikFunctions.EnableASecret(mikrotikCredentials, configFunctions.GeneratePassword20())
+
+    update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is enabled\.')
