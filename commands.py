@@ -54,7 +54,7 @@ def disable(update: Update, context: CallbackContext) -> None:
     mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
 
     mikrotikFunctions.DisableASecret(
-        newAccountEmail, newAccountPassword, mikrotikName, mikrotikCredentials)
+        newAccountEmail, mikrotikCredentials)
 
     mailFunctions.SendAccountInfoToClient(
         newAccountEmail, newAccountPassword, mikrotikCredentials['presharedKey'], mikrotikCredentials['IP'])
