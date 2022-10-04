@@ -89,3 +89,4 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
 
 def DisableASecret(name, mikrotikCredentials) -> None:
     EditSecret(mikrotikCredentials, name, **{'disabled': 'yes'})
+    # возмжоно нужна смена открытого ключа для ppp и рассылка нового всем пользователям ppp по почте
