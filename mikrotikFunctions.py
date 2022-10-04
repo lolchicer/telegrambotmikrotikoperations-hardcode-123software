@@ -1,57 +1,7 @@
 from tkinter import EXCEPTION
 from typing import Any
 import routeros_api
-import json
-import os.path
-
-
-class NoMikrotikNameException(Exception):
-    message = 'Server doesn\'t recognize this name of Mikrotik\. Try another one'
-
-
-def FindMikrotikName(mikrotikAliasItem):
-    mikrotikName = None
-
-    with open('mikrotiksAliases.json') as f:
-        mikrotiksAliases = json.load(f)
-
-        for name, alias in zip(mikrotiksAliases.keys(), mikrotiksAliases.values()):
-            if mikrotikAliasItem in alias:
-                mikrotikName = name
-
-    if mikrotikName == None:
-        raise NoMikrotikNameException()
-
-    return mikrotikName
-
-
-class NoMikrotikDefaultSettingsException(Exception):
-    message = 'Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.'
-
-
-def GetMikrotikDefaultSettings(mikrotikName):
-    with open('Mikrotiks Default Settings/' + mikrotikName + '.json') as f:
-        return json.load(f)
-
-
-class NoMikrotikCredentialsException(Exception):
-    message = 'Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.'
-
-
-def GetMikrotikCredentials(mikrotikName):
-    mikrotikPath = 'Mikrotiks Credentials/' + mikrotikName + '.json'
-
-    if not os.path.exists(mikrotikPath):
-        raise NoMikrotikCredentialsException()
-
-    with open(mikrotikPath) as f:
-        json_data = json.load(f)
-        tmp = json_data['IP']
-        tmp = json_data['username']
-        tmp = json_data['password']
-        tmp = json_data['presharedKey']
-        tmp = json_data['RouterOsGrater642']
-        return json_data
+import configFunctions
 
 
 class ExistingException(Exception):
@@ -76,7 +26,7 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
         if secret["name"] == accountName:
             raise ExistingException()
     secretsApi.add(name=accountName, password=password, **
-                   GetMikrotikDefaultSettings(mikrotikName))
+                   configFunctions.GetMikrotikDefaultSettings(mikrotikName))
     connection.disconnect()
 
     # check creation
