@@ -40,7 +40,7 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
 
 
 def RouterOSApiPoll(mikrotikCredentials):
-    return routeros_api.RouterOsApiPool(mikrotikCredentials['IP'], username=mikrotikCredentials['username'], password=mikrotikCredentials['password'], plaintext_login=mikrotikCredentials['RouterOsGrater642'])
+    return routeros_api.RouterOsApiPool(mikrotikCredentials['host'], username=mikrotikCredentials['username'], password=mikrotikCredentials['password'], plaintext_login=mikrotikCredentials['RouterOsGrater642'])
 
 
 class NoAccountException(Exception):

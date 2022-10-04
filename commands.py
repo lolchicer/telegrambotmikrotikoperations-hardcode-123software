@@ -35,7 +35,7 @@ def create(update: Update, context: CallbackContext) -> None:
         newAccountEmail, newAccountPassword, mikrotikName, mikrotikCredentials)
 
     mailFunctions.SendAccountInfoToClient(
-        newAccountEmail, newAccountPassword, mikrotikCredentials['presharedKey'], mikrotikCredentials['IP'])
+        newAccountEmail, newAccountPassword, mikrotikCredentials['presharedKey'], mikrotikCredentials['host'])
 
     update.message.reply_markdown_v2(
         '\!\!\!SUCCESS\!\!\!\r\nAccout is created\. Mail has sended to the Client\.')
@@ -57,6 +57,6 @@ def disable(update: Update, context: CallbackContext) -> None:
         newAccountEmail, mikrotikCredentials)
 
     mailFunctions.SendAccountInfoToClient(
-        newAccountEmail, newAccountPassword, mikrotikCredentials['presharedKey'], mikrotikCredentials['IP'])
+        newAccountEmail, newAccountPassword, mikrotikCredentials['presharedKey'], mikrotikCredentials['host'])
     
     update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\.')
