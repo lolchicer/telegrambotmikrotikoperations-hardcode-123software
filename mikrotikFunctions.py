@@ -17,8 +17,7 @@ class CreateAccountException(Exception):
 
 
 def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
-    connection = routeros_api.RouterOsApiPool(mikrotikCredentials['IP'], username=mikrotikCredentials['username'],
-                                              password=mikrotikCredentials['password'], plaintext_login=mikrotikCredentials['RouterOsGrater642'])
+    connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
     api = connection.get_api()
     secretsApi = api.get_resource('/ppp/secret')
     secretsList = secretsApi.get()
@@ -30,8 +29,7 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
     connection.disconnect()
 
     # check creation
-    connection = routeros_api.RouterOsApiPool(mikrotikCredentials['IP'], username=mikrotikCredentials['username'],
-                                              password=mikrotikCredentials['password'], plaintext_login=mikrotikCredentials['RouterOsGrater642'])
+    connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
     api = connection.get_api()
     secretsApi = api.get_resource('/ppp/secret')
     secretsList = secretsApi.get()
@@ -63,7 +61,7 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
     state = NO_SUCH_SECRET
 
     try:
-        connection = RouterOSApiPoll(mikrotikCredentials)
+        connection = RouterOSApiPoll(**mikrotikCredentials)
         api = connection.get_api()
         secretsApi = api.get_resource('/ppp/secret/set/?name={secretName}')
         secretsList = secretsApi.get()
