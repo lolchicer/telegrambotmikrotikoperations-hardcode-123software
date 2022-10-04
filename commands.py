@@ -49,14 +49,30 @@ def disable(update: Update, context: CallbackContext) -> None:
     formattingFunctions.ValidateMsgWords(msgWords, [formattingFunctions.PLAIN, formattingFunctions.EMAIL, formattingFunctions.PLAIN])
 
     newAccountEmail = msgWords[1]
-    newAccountPassword = configFunctions.GeneratePassword20()
     mikrotikName = configFunctions.GetMikrotikName(msgWords[2].lower())
     mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
 
     mikrotikFunctions.DisableASecret(
         newAccountEmail, mikrotikCredentials)
 
-    mailFunctions.SendAccountInfoToClient(
-        newAccountEmail, newAccountPassword, mikrotikCredentials['presharedKey'], mikrotikCredentials['host'])
+    mailFunctions.SendDisablingNotificationToClient(
+        newAccountEmail, mikrotikCredentials['presharedKey'], mikrotikCredentials['host'])
     
-    update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\.')
+    update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\. Mail has sended to the Client\.')
+
+
+def enable(update: Update, context: CallbackContext) -> None:
+    errorHandling.checkPermission(update)
+
+    msgWords = update.message.text.split()
+
+    formattingFunctions.ValidateMsgWords(msgWords, [formattingFunctions.PLAIN, formattingFunctions.EMAIL, formattingFunctions.PLAIN])
+
+    accountEmail = msgWords[1]
+    newAccountPassword = configFunctions.GeneratePassword20()
+    mikrotikName = configFunctions.GetMikrotikName(msgWords[2].lower())
+    mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
+
+    mikrotikFunctions.EnableASecret(accountEmail, mikrotikCredentials, newAccountPassword)
+
+    update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\. Mail has sended to the Client\.')

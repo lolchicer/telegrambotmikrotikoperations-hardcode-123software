@@ -67,9 +67,9 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
         for secret in secretsList:
             if secret['name'] == name:
                 secretsList.set(id=secret['id'], **properties)
-                
-                state = RETURNED 
-        
+
+                state = RETURNED
+
                 break
     except Exception:
         raise EditAccountException()
@@ -83,3 +83,8 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
 
 def DisableASecret(name, mikrotikCredentials) -> None:
     EditSecret(mikrotikCredentials, name, {'disabled': 'yes'})
+
+
+def EnableASecret(name, mikrotikCredentials, password) -> None:
+    EditSecret(mikrotikCredentials, name, {
+               'disabled': 'no', 'password': password})
