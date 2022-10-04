@@ -11,29 +11,40 @@ class CannotSendAccountInfoToClientException(Exception):
     message = 'Account is created\.\r\nBUT\! Some problem was caused with sending email to client\.\r\nNEED TO SEND CREDS MANUALY'
 
 def SendAccountInfoToClient(accountName, accountPassword, presharedKey, IP):
-    body = """Добрый день!
+    body = f"""Добрый день!
 
-Для вас была создана учетная запись для подключения к VPN по адресу IPadd :
+Для вас была создана учетная запись для подключения к VPN по адресу {IP} :
 
-Логин: login
-Пароль: password
+Логин: {accountName}
+Пароль: {accountPassword}
 
 Настройка нового подключения или сети
 Подключение к рабочему месту
 Создать новое подключение
 Использовать мое подключение к интернету (VPN)
-Интернет-адрес: IPadd
+Интернет-адрес: {IP}
 
 Вкладка Безопасность:
 Тип VPN: L2TP IPSec VPN
-Дополнительные параметры: для проверки подлинности использовать предварительный ключ. В нашем случае это: preshared (IP - IPSec - Peers)
+Дополнительные параметры: для проверки подлинности использовать предварительный ключ. В нашем случае это: {presharedKey} (IP - IPSec - Peers)
 
 Здесь же, в группе "Проверка подлинности", оставляем только CHAP v2"""
+    return SendEmailToClient(accountName, "Доступ к VPN", body)
 
-    body = body.replace('login', accountName)
-    body = body.replace('password', accountPassword)
-    body = body.replace('preshared', presharedKey)
-    body = body.replace('IPadd', IP)
+
+def SendDisablingNotificationToClient(accountName, IP):
+    body = f"""Добрый день!
+
+Работа вашей учетной записи для подключения к VPN по адресу {IP} была приостановлена."""
+    return SendEmailToClient(accountName, "Доступ к VPN", body)
+
+
+def SendEnablingNotificationToClient(accountName, accountPassword, IP):
+    body = f"""Добрый день!
+
+Работа вашей учетной записи для подключения к VPN по адресу {IP} была восстановлена.
+
+Новый пароль: {accountPassword}"""
     return SendEmailToClient(accountName, "Доступ к VPN", body)
 
 
