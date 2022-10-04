@@ -49,38 +49,38 @@ def SendEnablingNotificationToClient(accountName, accountPassword, IP):
 
 
 def SendEmailToClient(receiverEmail, subject, body):
-    smtpCreds = GetSmtpCredentials()
+    try:
+        smtpCreds = GetSmtpCredentials()
 
-    port = 465  # For SSL
-    smtp_server = smtpCreds['smtp_server']
-    sender_email = smtpCreds['sender_email']
-    receiver_emails = [smtpCreds['receiver_email'], receiverEmail]
-    password = smtpCreds['password']
+        port = 465  # For SSL
+        smtp_server = smtpCreds['smtp_server']
+        sender_email = smtpCreds['sender_email']
+        receiver_emails = [smtpCreds['receiver_email'], receiverEmail]
+        password = smtpCreds['password']
 
-    message = MIMEMultipart()
-    message["From"] = sender_email
-    message["To"] = ", ".join(receiver_emails)
-    message["Subject"] = subject
-    # message["Bcc"] = receiver_email  # Recommended for mass emails
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = ", ".join(receiver_emails)
+        message["Subject"] = subject
+        # message["Bcc"] = receiver_email  # Recommended for mass emails
 
-    message.attach(MIMEText(body, "plain"))
-    text = message.as_string()
+        message.attach(MIMEText(body, "plain"))
+        text = message.as_string()
 
-    context = ssl.create_default_context()
-    context.check_hostname = False
-    context.verify_mode = ssl.CERT_NONE
+        context = ssl.create_default_context()
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
 
-    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_emails, text)
-        server.quit()
+        with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_emails, text)
+            server.quit()
+    except Exception:
+        raise CannotSendAccountInfoToClientException()
 
 
 def GetSmtpCredentials():
     mailCredentials = 'mailCredentials.json'
-
-    if not os.path.exists(mailCredentials):
-        raise CannotSendAccountInfoToClientException()
 
     with open('mailCredentials.json') as f:
         json_data = json.load(f)
