@@ -62,7 +62,7 @@ def SendEmailToClient(receiverEmail, subject, body):
         port = 465  # For SSL
         smtp_server = smtpCreds['smtp_server']
         sender_email = smtpCreds['sender_email']
-        receiver_emails = [smtpCreds['receiver_email'], receiverEmail]
+        receiver_emails = [receiverEmail]
         password = smtpCreds['password']
 
         message = MIMEMultipart()
