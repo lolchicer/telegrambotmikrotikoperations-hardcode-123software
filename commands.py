@@ -50,7 +50,7 @@ def create(update: Update, context: CallbackContext) -> None:
         newAccountEmail, newAccountPassword, mikrotikName, mikrotikCredentials)
 
     mailFunctions.SendAccountInfoToClient(
-        newAccountEmail, newAccountPassword, mikrotikCredentials['presharedKey'], mikrotikCredentials['host'])
+        newAccountEmail, newAccountPassword, mikrotikCredentials['preshared_key'], mikrotikCredentials['host'])
 
     update.message.reply_markdown_v2(
         '\!\!\!SUCCESS\!\!\!\r\nAccout is created\. Mail has sended to the Client\.')
