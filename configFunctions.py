@@ -86,6 +86,23 @@ def GetMikrotikName(mikrotikAliasItem) -> str:
     raise NoMikrotikNameException()
 
 
+def HasPresharedKeys() -> bool:
+    return os.path.exists('presharedKeys.json')
+
+
+class NoPresharedKeyException(Exception):
+    message = 'Server doesn\'t have file with preshared keys. Email sending has failed.'
+
+
+def GetPresharedKey(mikrotikName: str) -> str:
+    if HasPresharedKeys():
+        with open('presharedKeys.json') as f:
+            presharedKeys = json.load(f)
+
+            return presharedKeys[mikrotikName]
+    raise NoPresharedKeyException()
+
+
 def GetSmtpCredentials():
     mailCredentials = 'mailCredentials.json'
 
