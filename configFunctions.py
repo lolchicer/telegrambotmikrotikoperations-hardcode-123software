@@ -74,3 +74,15 @@ def GetMikrotikName(mikrotikAliasItem) -> str:
         raise NoMikrotikNameException()
 
     return mikrotikName
+
+
+def GetSmtpCredentials():
+    mailCredentials = 'mailCredentials.json'
+
+    with open('mailCredentials.json') as f:
+        json_data = json.load(f)
+        tmp = json_data['smtp_server']
+        tmp = json_data['sender_email']
+        tmp = json_data['receiver_email']
+        tmp = json_data['password']
+        return json_data

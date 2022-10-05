@@ -1,8 +1,6 @@
-import sys
-import json
 import smtplib
 import ssl
-import os.path
+import configFunctions
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -59,7 +57,7 @@ def SendNewPasswordToClient(accountName, accountPassword, IP):
 
 def SendEmailToClient(receiverEmail, subject, body):
     try:
-        smtpCreds = GetSmtpCredentials()
+        smtpCreds = configFunctions.GetSmtpCredentials()
 
         port = 465  # For SSL
         smtp_server = smtpCreds['smtp_server']
@@ -86,15 +84,3 @@ def SendEmailToClient(receiverEmail, subject, body):
             server.quit()
     except Exception:
         raise CannotSendAccountInfoToClientException()
-
-
-def GetSmtpCredentials():
-    mailCredentials = 'mailCredentials.json'
-
-    with open('mailCredentials.json') as f:
-        json_data = json.load(f)
-        tmp = json_data['smtp_server']
-        tmp = json_data['sender_email']
-        tmp = json_data['receiver_email']
-        tmp = json_data['password']
-        return json_data
