@@ -19,12 +19,17 @@ def myId(update: Update, context: CallbackContext) -> None:
         f'SO WHAT DO YOU WANT, SEXY? \r\nYour ID is {user.id}')
 
 
+# нужно отправлять что-то со стороны микротика для наглядности
 def connect(update: Update, context: CallbackContext) -> None:
     errorHandling.checkPermission(update)
 
     msgWords = update.message.text.split()
+
+    formattingFunctions.ValidateMsgWords(msgWords, [formattingFunctions.PLAIN, formattingFunctions.PLAIN])
+
+    mikrotikName = configFunctions.GetMikrotikName(msgWords[1].lower())
     
-    mikrotikCredentials = configFunctions.GetMikrotikCredentials(msgWords[1])
+    mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
 
     mikrotikFunctions.Connect(mikrotikCredentials)
 

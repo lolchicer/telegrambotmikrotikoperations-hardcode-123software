@@ -45,7 +45,7 @@ class NoMikrotikCredentialsException(Exception):
     message = 'Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.'
 
 
-def GetMikrotikCredentials(mikrotikName):
+def GetMikrotikCredentials(mikrotikName: str) -> str:
     mikrotikPath = 'Mikrotiks Credentials/' + mikrotikName + '.json'
 
     if not os.path.exists(mikrotikPath):
@@ -60,20 +60,30 @@ class NoMikrotikNameException(Exception):
     message = 'Server doesn\'t recognize this name of Mikrotik\. Try another one'
 
 
-def GetMikrotikName(mikrotikAliasItem) -> str:
-    mikrotikName = None
+def HasMikrotikAliases() -> bool:
+    return os.path.exists('mikrotiksAliases.json')
 
+
+def GetMikrotikNameByAliasItem(mikrotikAliasItem) -> str:
     with open('mikrotiksAliases.json') as f:
         mikrotiksAliases = json.load(f)
 
         for name, alias in zip(mikrotiksAliases.keys(), mikrotiksAliases.values()):
             if mikrotikAliasItem in alias:
-                mikrotikName = name
+                return name
+            
 
-    if mikrotikName == None:
-        raise NoMikrotikNameException()
+def HasMikrotikCredentials(mikrotikName) -> bool:
+    return os.path.exists(f'Mikrotiks Credentials/{mikrotikName}.json')
 
-    return mikrotikName
+
+def GetMikrotikName(mikrotikAliasItem) -> str:
+    if HasMikrotikAliases():
+        return GetMikrotikNameByAliasItem(mikrotikAliasItem)
+    if HasMikrotikCredentials(mikrotikAliasItem):
+        # тут должно создаваться исключение об отсутствии конфига, но я не знаю, где оно должно обрабатываться
+        return mikrotikAliasItem
+    raise NoMikrotikNameException()
 
 
 def GetSmtpCredentials():
@@ -83,6 +93,5 @@ def GetSmtpCredentials():
         json_data = json.load(f)
         tmp = json_data['smtp_server']
         tmp = json_data['sender_email']
-        tmp = json_data['receiver_email']
         tmp = json_data['password']
         return json_data
