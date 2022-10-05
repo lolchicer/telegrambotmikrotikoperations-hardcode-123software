@@ -46,7 +46,7 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
 
 
 def RouterOSApiPoll(mikrotikCredentials):
-    return routeros_api.RouterOsApiPool(mikrotikCredentials['IP'], username=mikrotikCredentials['username'], password=mikrotikCredentials['password'], plaintext_login=mikrotikCredentials['RouterOsGrater642'])
+    return routeros_api.RouterOsApiPool(mikrotikCredentials['host'], username=mikrotikCredentials['username'], password=mikrotikCredentials['password'], plaintext_login=mikrotikCredentials['RouterOsGrater642'])
 
 
 class NoAccountException(Exception):
@@ -73,9 +73,9 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
         for secret in secretsList:
             if secret['name'] == name:
                 secretsList.set(id=secret['id'], **properties)
-                
-                state = RETURNED 
-        
+
+                state = RETURNED
+
                 break
     except Exception:
         raise EditAccountException()
@@ -88,9 +88,10 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
 
 
 def DisableASecret(name, mikrotikCredentials) -> None:
-    EditSecret(mikrotikCredentials, name, **{'disabled': 'yes'})
+    EditSecret(mikrotikCredentials, name, {'disabled': 'yes'})
     # возмжоно нужна смена открытого ключа для ppp и рассылка нового всем пользователям ppp по почте
 
 
 def EnableASecret(name, mikrotikCredentials, password) -> None:
-    EditSecret(mikrotikCredentials, name, **{'disabled': 'no', 'password': password})
+    EditSecret(mikrotikCredentials, name, {
+               'disabled': 'no', 'password': password})

@@ -32,10 +32,6 @@ def GeneratePassword20():
     return ''.join(secrets.choice(alphabet) for i in range(20))
 
 
-class NoMikrotikNameException(Exception):
-    message = 'Server doesn\'t recognize this name of Mikrotik\. Try another one'
-
-
 class NoMikrotikDefaultSettingsException(Exception):
     message = 'Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.'
 
@@ -43,6 +39,10 @@ class NoMikrotikDefaultSettingsException(Exception):
 def GetMikrotikDefaultSettings(mikrotikName):
     with open('Mikrotiks Default Settings/' + mikrotikName + '.json') as f:
         return json.load(f)
+
+
+class NoMikrotikCredentialsException(Exception):
+    message = 'Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.'
 
 
 def GetMikrotikCredentials(mikrotikName):
@@ -56,11 +56,11 @@ def GetMikrotikCredentials(mikrotikName):
         return json_data
 
 
-class NoMikrotikCredentialsException(Exception):
-    message = 'Some problem with getting mikrotik credentials\.\r\nMaybe server doesn\'t have file with this credentials\.'
+class NoMikrotikNameException(Exception):
+    message = 'Server doesn\'t recognize this name of Mikrotik\. Try another one'
 
 
-def FindMikrotikName(mikrotikAliasItem):
+def GetMikrotikName(mikrotikAliasItem) -> str:
     mikrotikName = None
 
     with open('mikrotiksAliases.json') as f:

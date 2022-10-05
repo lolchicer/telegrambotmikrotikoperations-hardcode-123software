@@ -1,10 +1,16 @@
 import re
-import mailFunctions
-from telegram import Update
+
+
+class InvalidCreateMsgWordsFormat(Exception):
+    message = 'You should send email and mikrotik name\!\r\nExample: /create info@mail\.ru reshetnikova'
 
 
 class InvalidCreateEmailFormat(Exception):
     message = 'First argument must be the email address\.\r\nExample: /create info@mail\.ru reshetnikova'
+
+
+PLAIN = 0
+EMAIL = 2
 
 
 def ValidateEmail(email):
@@ -13,24 +19,12 @@ def ValidateEmail(email):
         raise InvalidCreateEmailFormat()
 
 
-class InvalidCreateMsgWordsFormat(Exception):
-    message = 'You should send email and mikrotik name\!\r\nExample: /create info@mail\.ru reshetnikova'
-
-
-PLAIN = 0
-MIKROTIK_ALIAS = 1
-EMAIL = 2
-
-
-def createMsgWords(update: Update, formattings: list[int]) -> list[str]:
-    msgWords = update.message.text.split()
-    if len(msgWords) != len(format):
+def ValidateMsgWords(msgWords: list[str], formattings: list[int]) -> None:
+    if len(msgWords) != 3:
         raise InvalidCreateMsgWordsFormat()
-
+    
     for msgWord, formatting in zip(msgWords, formattings):
         if formatting == PLAIN:
-            pass
-        if formatting == MIKROTIK_ALIAS:
             pass
         if formatting == EMAIL:
             ValidateEmail(msgWord)

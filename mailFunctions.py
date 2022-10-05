@@ -11,116 +11,85 @@ class CannotSendAccountInfoToClientException(Exception):
     message = 'Account is created\.\r\nBUT\! Some problem was caused with sending email to client\.\r\nNEED TO SEND CREDS MANUALY'
 
 def SendAccountInfoToClient(accountName, accountPassword, presharedKey, IP):
-    body = """Добрый день!
+    body = f"""Добрый день!
 
-Для вас была создана учетная запись для подключения к VPN по адресу IPadd :
+Для вас была создана учетная запись для подключения к VPN по адресу {IP} :
 
-Логин: login
-Пароль: password
+Логин: {accountName}
+Пароль: {accountPassword}
 
 Настройка нового подключения или сети
 Подключение к рабочему месту
 Создать новое подключение
 Использовать мое подключение к интернету (VPN)
-Интернет-адрес: IPadd
+Интернет-адрес: {IP}
 
 Вкладка Безопасность:
 Тип VPN: L2TP IPSec VPN
-Дополнительные параметры: для проверки подлинности использовать предварительный ключ. В нашем случае это: preshared (IP - IPSec - Peers)
+Дополнительные параметры: для проверки подлинности использовать предварительный ключ. В нашем случае это: {presharedKey} (IP - IPSec - Peers)
 
 Здесь же, в группе "Проверка подлинности", оставляем только CHAP v2"""
-
-    body = body.replace('login', accountName)
-    body = body.replace('password', accountPassword)
-    body = body.replace('preshared', presharedKey)
-    body = body.replace('IPadd', IP)
     return SendEmailToClient(accountName, "Доступ к VPN", body)
 
 
-def SendNewPasswordToClent(accountName, accountPassword, IP):
-    body = """Добрый день!
-    
-    Пароль вашей учётной записи login для подключения к VPN по адресу IPadd был изменён:
-    
-    password"""
+def SendDisablingNotificationToClient(accountName, IP):
+    body = f"""Добрый день!
 
-    body = body.replace('login', accountName)
-    body = body.replace('password', accountPassword)
-    body = body.replace('IPadd', IP)
+Работа вашей учетной записи для подключения к VPN по адресу {IP} была приостановлена."""
     return SendEmailToClient(accountName, "Доступ к VPN", body)
 
 
-def SendDisablingNotificationToClent(accountName, IP):
-    body = """Добрый день!
-    
-    Действие вашей учётной записи login для подключения к VPN по адресу IPadd было приостановлено."""
+def SendEnablingNotificationToClient(accountName, accountPassword, IP):
+    body = f"""Добрый день!
 
-    body = body.replace('login', accountName)
-    body = body.replace('IPadd', IP)
+Работа вашей учетной записи для подключения к VPN по адресу {IP} была восстановлена.
+
+Новый пароль: {accountPassword}"""
     return SendEmailToClient(accountName, "Доступ к VPN", body)
 
 
-def SendEnablingNotificationToClent(accountName, accountPassword, presharedKey, IP):
-    body = """Добрый день!
+def SendNewPasswordToClient(accountName, accountPassword, IP):
+    body = f"""Добрый день!
     
-    Действие вашей учётной записи login для подключения к VPN по адресу IPadd было восстановлено:
+Пароль вашей учётной записи {accountName} для подключения к VPN по адресу {IP} был изменён:
     
-    Новый пароль: password
-    Новый предварительный ключ: preshared"""
-
-    body = body.replace('login', accountName)
-    body = body.replace('password', accountPassword)
-    body = body.replace('preshared', presharedKey)
-    body = body.replace('IPadd', IP)
-    return SendEmailToClient(accountName, "Доступ к VPN", body)
-
-
-def SendNewPasswordToClent(accountName, accountPassword, IP):
-    body = """Добрый день!
-    
-    Пароль вашей учётной записи login для подключения к VPN по адресу IPadd был изменён:
-    
-    password"""
-
-    body = body.replace('login', accountName)
-    body = body.replace('password', accountPassword)
-    body = body.replace('IPadd', IP)
+{accountPassword}"""
     return SendEmailToClient(accountName, "Доступ к VPN", body)
 
 
 def SendEmailToClient(receiverEmail, subject, body):
-    smtpCreds = GetSmtpCredentials()
+    try:
+        smtpCreds = GetSmtpCredentials()
 
-    port = 465  # For SSL
-    smtp_server = smtpCreds['smtp_server']
-    sender_email = smtpCreds['sender_email']
-    receiver_emails = [smtpCreds['receiver_email'], receiverEmail]
-    password = smtpCreds['password']
+        port = 465  # For SSL
+        smtp_server = smtpCreds['smtp_server']
+        sender_email = smtpCreds['sender_email']
+        receiver_emails = [smtpCreds['receiver_email'], receiverEmail]
+        password = smtpCreds['password']
 
-    message = MIMEMultipart()
-    message["From"] = sender_email
-    message["To"] = ", ".join(receiver_emails)
-    message["Subject"] = subject
-    # message["Bcc"] = receiver_email  # Recommended for mass emails
+        message = MIMEMultipart()
+        message["From"] = sender_email
+        message["To"] = ", ".join(receiver_emails)
+        message["Subject"] = subject
+        # message["Bcc"] = receiver_email  # Recommended for mass emails
 
-    message.attach(MIMEText(body, "plain"))
-    text = message.as_string()
+        message.attach(MIMEText(body, "plain"))
+        text = message.as_string()
 
-    context = ssl.create_default_context()
-    context.check_hostname = False
-    context.verify_mode = ssl.CERT_NONE
+        context = ssl.create_default_context()
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
 
-    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_emails, text)
-        server.quit()
+        with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_emails, text)
+            server.quit()
+    except Exception:
+        raise CannotSendAccountInfoToClientException()
 
 
 def GetSmtpCredentials():
     mailCredentials = 'mailCredentials.json'
-
-    if not os.path.exists(mailCredentials):
-        raise CannotSendAccountInfoToClientException()
 
     with open('mailCredentials.json') as f:
         json_data = json.load(f)
