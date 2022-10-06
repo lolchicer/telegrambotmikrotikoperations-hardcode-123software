@@ -63,12 +63,12 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
     try:
         connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
         api = connection.get_api()
-        secretsApi = api.get_resource(f'/ppp/secret/set/?name={name}')
+        secretsApi = api.get_resource(f'/ppp/secret')
         secretsList = secretsApi.get()
 
         for secret in secretsList:
             if secret['name'] == name:
-                secretsList.set(id=secret['id'], **properties)
+                secretsApi.set(id=secret['id'], **properties)
 
                 state = RETURNED
 
