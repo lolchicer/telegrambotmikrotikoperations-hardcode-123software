@@ -1,4 +1,5 @@
 import configFunctions
+import exceptions
 import mailFunctions
 import mikrotikFunctions
 from telegram import Update
@@ -19,11 +20,10 @@ def checkPermission(update: Update) -> None:
 
 def errorHandle(update: Update, context: CallbackContext):
     error = context.error
+    error = exceptions.SentException(error)
     
     try:
-        update.message.reply_markdown_v2(error.message)
-        if type(error) == mailFunctions.CannotSendAccountInfoToClientException:
-            print(error.based)
+        update.message.reply_markdown_v2(error.sentMessage)
     except Exception:
         update.message.reply_markdown_v2('Some exception has thrown\.\r\nNEED TO MAINTENANCE THE BOT')
     finally:
