@@ -62,7 +62,7 @@ def SendNewPasswordToClient(accountName, accountPassword, IP):
 
 def SendEmailToClient(receiverEmail, subject, body):
     try:
-        smtpCreds = configFunctions.GetSmtpCredentials()
+        smtpCreds = configFunctions.GetMailCredentials()
 
         port = 465  # For SSL
         smtp_server = smtpCreds['smtp_server']
