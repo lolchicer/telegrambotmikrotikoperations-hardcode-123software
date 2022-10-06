@@ -71,7 +71,7 @@ def disable(update: Update, context: CallbackContext) -> None:
         newAccountEmail, mikrotikCredentials)
 
     mailFunctions.SendDisablingNotificationToClient(
-        newAccountEmail, mikrotikCredentials['presharedKey'], mikrotikCredentials['host'])
+        newAccountEmail, mikrotikCredentials['host'])
     
     update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\. Mail has sended to the Client\.')
 
@@ -90,4 +90,7 @@ def enable(update: Update, context: CallbackContext) -> None:
 
     mikrotikFunctions.EnableASecret(accountEmail, mikrotikCredentials, newAccountPassword)
 
-    update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\. Mail has sended to the Client\.')
+    mailFunctions.SendEnablingNotificationToClient(
+        accountEmail, newAccountPassword, mikrotikCredentials['host'])
+
+    update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is enabled\. Mail has sended to the Client\.')

@@ -45,10 +45,6 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
     raise NoResultException(Exception)
 
 
-def RouterOSApiPoll(mikrotikCredentials):
-    return routeros_api.RouterOsApiPool(mikrotikCredentials['host'], username=mikrotikCredentials['username'], password=mikrotikCredentials['password'], plaintext_login=mikrotikCredentials['RouterOsGrater642'])
-
-
 class NoAccountException(Exception):
     message = 'No such account exists on this Mikrotik\.'
 
@@ -65,14 +61,14 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
     state = NO_SUCH_SECRET
 
     try:
-        connection = RouterOSApiPoll(**mikrotikCredentials)
+        connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
         api = connection.get_api()
-        secretsApi = api.get_resource('/ppp/secret/set/?name={secretName}')
+        secretsApi = api.get_resource(f'/ppp/secret')
         secretsList = secretsApi.get()
 
         for secret in secretsList:
             if secret['name'] == name:
-                secretsList.set(id=secret['id'], **properties)
+                secretsApi.set(id=secret['id'], **properties)
 
                 state = RETURNED
 
