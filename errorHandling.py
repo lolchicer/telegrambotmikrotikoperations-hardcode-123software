@@ -56,6 +56,8 @@ def errorHandle(update: Update, context: CallbackContext):
     
     try:
         update.message.reply_markdown_v2(error.message)
+        if type(error) == mailFunctions.CannotSendAccountInfoToClientException:
+            print(error.based)
     except Exception:
         update.message.reply_markdown_v2('Some exception has thrown\.\r\nNEED TO MAINTENANCE THE BOT')
     finally:
