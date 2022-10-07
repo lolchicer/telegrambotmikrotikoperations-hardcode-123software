@@ -1,0 +1,1 @@
+я просто оставлю это здесь: https://docs.python-telegram-bot.org/en/stable/telegram.utils.helpers.html#telegram.utils.helpers.escape_markdown
