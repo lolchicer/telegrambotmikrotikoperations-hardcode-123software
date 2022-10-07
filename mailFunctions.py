@@ -1,17 +1,14 @@
 import smtplib
 import ssl
+import exceptions
 import configFunctions
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-class CannotSendAccountInfoToClientException(Exception):
-    message = 'Account is created\.\r\nBUT\! Some problem was caused with sending email to client\.\r\nNEED TO SEND CREDS MANUALY'
-    based: Exception
-
-    def __init__(self, based: Exception, *args: object) -> None:
-        super().__init__(*args)
-        self.based = based
+class CannotSendAccountInfoToClientException(exceptions.SentException):
+    def __init__(self, sentMessage: str = 'Account is created\.\r\nBUT\! Some problem was caused with sending email to client\.\r\nNEED TO SEND CREDS MANUALY', *args: object) -> None:
+        super().__init__(sentMessage, *args)
 
 def SendAccountInfoToClient(accountName, accountPassword, presharedKey, IP):
     body = f"""Добрый день!
@@ -88,4 +85,4 @@ def SendEmailToClient(receiverEmail, subject, body):
             server.sendmail(sender_email, receiver_emails, text)
             server.quit()
     except Exception as error:
-        raise CannotSendAccountInfoToClientException(error)
+        raise CannotSendAccountInfoToClientException(args=error)
