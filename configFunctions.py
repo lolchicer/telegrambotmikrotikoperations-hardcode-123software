@@ -54,9 +54,8 @@ def GetMikrotikAlias(mikrotikAliasItem) -> str:
 
 
 class NoMikrotikNameError(exceptions.SentException):
-    def __init__(self, sentMessage: str, *args: object) -> None:
+    def __init__(self, sentMessage: str = "Server doesn't recognize this name of Mikrotik. Try another one", *args: object) -> None:
         super().__init__(sentMessage, *args)
-    message = 'Server doesn\'t recognize this name of Mikrotik\. Try another one'
 
 
 def GetMikrotikName(mikrotikAliasItem) -> str:
@@ -68,7 +67,8 @@ def GetMikrotikName(mikrotikAliasItem) -> str:
 
 
 class NoPresharedKeyError(exceptions.SentException):
-    message = 'Server doesn\'t have file with preshared keys. Email sending has failed.'
+    def __init__(self, sentMessage: str = "Server doesn\'t have file with preshared keys. Email sending has failed.", *args: object) -> None:
+        super().__init__(sentMessage, *args)
 
 
 def GetMikrotikCredentials(mikrotikName: str):

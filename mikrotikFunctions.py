@@ -10,17 +10,17 @@ def Connect(mikrotikCredentails):
 
 
 class ExistingException(exceptions.SentException):
-    def __init__(self, sentMessage: str = 'This account already exist on this Mikrotik\.', *args: object) -> None:
+    def __init__(self, sentMessage: str = "This account already exist on this Mikrotik.", *args: object) -> None:
         super().__init__(sentMessage, *args)
 
 
 class NoResultException(exceptions.SentException):
-    def __init__(self, sentMessage: str = 'Tried to create new account\. Operation has no exceptions.\r\nBut by some reason check new account is not passed\.\r\nNEED TO MANUAL TESTING CREATION AND BOT FUNCTIONALITY', *args: object) -> None:
+    def __init__(self, sentMessage: str = "Tried to create new account Operation has no exceptions.\r\nBut by some reason check new account is not passed\r\nNEED TO MANUAL TESTING CREATION AND BOT FUNCTIONALITY", *args: object) -> None:
         super().__init__(sentMessage, *args)
 
 
 class CreateAccountException(exceptions.SentException):
-    def __init__(self, sentMessage: str = 'Some exception has thrown when bot try to create and check new account\.\r\nNEED TO MAINTENANCE THE BOT', *args: object) -> None:
+    def __init__(self, sentMessage: str = "Some exception has thrown when bot try to create and check new account\r\nNEED TO MAINTENANCE THE BOT", *args: object) -> None:
         super().__init__(sentMessage, *args)
 
 
@@ -31,7 +31,7 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
         secretsApi = api.get_resource('/ppp/secret')
         secretsList = secretsApi.get()
         for secret in secretsList:
-            if secret["name"] == accountName:
+            if secret['name'] == accountName:
                 raise ExistingException()
         secretsApi.add(name=accountName, password=password, **
                     configFunctions.GetMikrotikDefaultSettings(mikrotikName))
@@ -43,7 +43,7 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
         secretsApi = api.get_resource('/ppp/secret')
         secretsList = secretsApi.get()
         for secret in secretsList:
-            if secret["name"] == accountName:
+            if secret['name'] == accountName:
                 connection.disconnect()
                 return
         connection.disconnect()
@@ -53,12 +53,12 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
 
 
 class NoAccountException(exceptions.SentException):
-    def __init__(self, sentMessage: str = 'No such account exists on this Mikrotik\.', *args: object) -> None:
+    def __init__(self, sentMessage: str = "No such account exists on this Mikrotik", *args: object) -> None:
         super().__init__(sentMessage, *args)
 
 
 class EditAccountException(exceptions.SentException):
-    def __init__(self, sentMessage: str = 'Some exception has thrown when bot try edit the account\.\r\nNEED TO MAINTENANCE THE BOT', *args: object) -> None:
+    def __init__(self, sentMessage: str = "Some exception has thrown when bot try edit the account\r\nNEED TO MAINTENANCE THE BOT", *args: object) -> None:
         super().__init__(sentMessage, *args)
 
 

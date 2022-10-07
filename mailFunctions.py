@@ -7,7 +7,7 @@ from email.mime.text import MIMEText
 
 
 class CannotSendAccountInfoToClientException(exceptions.SentException):
-    def __init__(self, sentMessage: str = 'Account is created\.\r\nBUT\! Some problem was caused with sending email to client\.\r\nNEED TO SEND CREDS MANUALY', *args: object) -> None:
+    def __init__(self, sentMessage: str = "Account is created\r\nBUT\! Some problem was caused with sending email to client.\r\nNEED TO SEND CREDS MANUALY", *args: object) -> None:
         super().__init__(sentMessage, *args)
 
 def SendAccountInfoToClient(accountName, accountPassword, presharedKey, IP):

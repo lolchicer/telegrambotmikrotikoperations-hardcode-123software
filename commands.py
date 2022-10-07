@@ -10,13 +10,13 @@ from telegram.ext import CallbackContext
 def start(update: Update, context: CallbackContext) -> None:
     #"""Send a message when the command /start is issued."""
     user = update.effective_user
-    update.message.reply_markdown_v2(fr'Hi {user.mention_markdown_v2()}\!')
+    update.message.reply_markdown_v2(f"Hi {user.mention_markdown_v2()}\!")
 
 
 def myId(update: Update, context: CallbackContext) -> None:
     user = update.effective_user
     update.message.reply_markdown_v2(
-        f'SO WHAT DO YOU WANT, SEXY? \r\nYour ID is {user.id}')
+        f"SO WHAT DO YOU WANT, SEXY? \r\nYour ID is {user.id}")
 
 
 # нужно отправлять что-то со стороны микротика для наглядности
@@ -53,7 +53,7 @@ def create(update: Update, context: CallbackContext) -> None:
         newAccountEmail, newAccountPassword, configFunctions.GetPresharedKey(mikrotikName), mikrotikCredentials['host'])
 
     update.message.reply_markdown_v2(
-        '\!\!\!SUCCESS\!\!\!\r\nAccout is created\. Mail has sended to the Client\.')
+        "\!\!\!SUCCESS\!\!\!\r\nAccout is created\. Mail has sended to the Client\.")
 
 
 def disable(update: Update, context: CallbackContext) -> None:
@@ -73,7 +73,7 @@ def disable(update: Update, context: CallbackContext) -> None:
     mailFunctions.SendDisablingNotificationToClient(
         newAccountEmail, mikrotikCredentials['host'])
     
-    update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\. Mail has sended to the Client\.')
+    update.message.reply_markdown_v2("\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\. Mail has sended to the Client\.")
 
 
 def enable(update: Update, context: CallbackContext) -> None:
@@ -93,4 +93,4 @@ def enable(update: Update, context: CallbackContext) -> None:
     mailFunctions.SendEnablingNotificationToClient(
         accountEmail, newAccountPassword, mikrotikCredentials['host'])
 
-    update.message.reply_markdown_v2('\!\!\!SUCCESS\!\!\!\r\nAccout is enabled\. Mail has sended to the Client\.')
+    update.message.reply_markdown_v2("\!\!\!SUCCESS\!\!\!\r\nAccout is enabled\. Mail has sended to the Client\.")

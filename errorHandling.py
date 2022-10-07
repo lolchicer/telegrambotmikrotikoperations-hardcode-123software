@@ -4,10 +4,11 @@ import mailFunctions
 import mikrotikFunctions
 from telegram import Update
 from telegram.ext import CallbackContext
+from telegram.utils.helpers import escape_markdown
 
 
 class NoPermission(Exception):
-    message = 'You don\'t have permissions to do this\.'
+    message = "You don\'t have permissions to do this."
 
 
 def checkPermission(update: Update) -> None:
@@ -25,7 +26,7 @@ def errorHandle(update: Update, context: CallbackContext):
     try:
         sentMessage = error.sentMessage
     except Exception:
-        sentMessage = 'Some exception has thrown\.\r\nNEED TO MAINTENANCE THE BOT'
+        sentMessage = "Some exception has thrown.\r\nNEED TO MAINTENANCE THE BOT"
     finally:
-        update.message.reply_markdown_v2(sentMessage)
+        update.message.reply_markdown_v2(escape_markdown(sentMessage, version=2))
         print(error)

@@ -3,12 +3,12 @@ import exceptions
 
 
 class InvalidCreateMsgWordsFormat(exceptions.SentException):
-    def __init__(self, sentMessage: str = 'You should send email and mikrotik name\!\r\nExample: /create info@mail\.ru reshetnikova', *args: object) -> None:
+    def __init__(self, sentMessage: str = "You should send email and mikrotik name!\r\nExample: /create info@mail.ru reshetnikova", *args: object) -> None:
         super().__init__(sentMessage, *args)
 
 
 class InvalidCreateEmailFormat(exceptions.SentException):
-    def __init__(self, sentMessage: str = 'First argument must be the email address\.\r\nExample: /create info@mail\.ru reshetnikova', *args: object) -> None:
+    def __init__(self, sentMessage: str = "First argument must be the email address.\r\nExample: /create info@mail.ru reshetnikova", *args: object) -> None:
         super().__init__(sentMessage, *args)
 
 
@@ -17,7 +17,7 @@ EMAIL = 2
 
 
 def ValidateEmail(email):
-    regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+    regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
     if not re.fullmatch(regex, email):
         raise InvalidCreateEmailFormat()
 
