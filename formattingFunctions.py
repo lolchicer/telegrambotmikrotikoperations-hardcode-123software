@@ -1,12 +1,15 @@
 import re
+import exceptions
 
 
-class InvalidCreateMsgWordsFormat(Exception):
-    message = 'You should send email and mikrotik name\!\r\nExample: /create info@mail\.ru reshetnikova'
+class InvalidCreateMsgWordsFormat(exceptions.SentException):
+    def __init__(self, sentMessage: str = 'You should send email and mikrotik name\!\r\nExample: /create info@mail\.ru reshetnikova', *args: object) -> None:
+        super().__init__(sentMessage, *args)
 
 
-class InvalidCreateEmailFormat(Exception):
-    message = 'First argument must be the email address\.\r\nExample: /create info@mail\.ru reshetnikova'
+class InvalidCreateEmailFormat(exceptions.SentException):
+    def __init__(self, sentMessage: str = 'First argument must be the email address\.\r\nExample: /create info@mail\.ru reshetnikova', *args: object) -> None:
+        super().__init__(sentMessage, *args)
 
 
 PLAIN = 0
