@@ -23,7 +23,7 @@ def ValidateEmail(email):
 
 
 def ValidateMsgWords(msgWords: list[str], formattings: list[int]) -> None:
-    if len(msgWords) != 3:
+    if len(msgWords) != len(formattings):
         raise InvalidCreateMsgWordsFormat()
     
     for msgWord, formatting in zip(msgWords, formattings):
