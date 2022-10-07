@@ -19,8 +19,8 @@ def checkPermission(update: Update) -> None:
 
 
 def errorHandle(update: Update, context: CallbackContext):
+    error: exceptions.SentException
     error = context.error
-    error = exceptions.SentException(error)
     
     try:
         sentMessage = error.sentMessage
