@@ -61,7 +61,7 @@ class NoMikrotikNameError(exceptions.SentException):
 def GetMikrotikName(mikrotikAliasItem) -> str:
     try:
         return GetMikrotikAlias(mikrotikAliasItem)
-    except (NoMikrotikAliasError, NoMikrotikNameError) as error:
+    except (NoMikrotikAliasError, NoConfigError) as error:
         print(error)
         return mikrotikAliasItem
 
