@@ -1,3 +1,5 @@
+написание логики на python требует совершенно волшебного склада ума
+например, это – неправильный код:
 ```
 def errorHandle(update: Update, context: CallbackContext):
     error = context.error
@@ -10,3 +12,18 @@ def errorHandle(update: Update, context: CallbackContext):
     finally:
         print(error)
 ```
+– и нужно писать вот так:
+```
+def errorHandle(update: Update, context: CallbackContext):
+    error = context.error
+    error = exceptions.SentException(error)
+    
+    try:
+        sentMessage = error.sentMessage
+    except Exception:
+        sentMessage = 'Some exception has thrown\.\r\nNEED TO MAINTENANCE THE BOT'
+    finally:
+        update.message.reply_markdown_v2(sentMessage)
+        print(error)
+```
+и забыть про эту ерунду просто так нельзя, потому что все дефолтные библиотеки языка поражены трай-кетчами, так что if-else структуры нарушат эту так называемую eafp-гармонию.
