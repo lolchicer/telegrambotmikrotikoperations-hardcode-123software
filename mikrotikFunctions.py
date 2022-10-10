@@ -10,13 +10,13 @@ def Connect(mikrotikCredentails):
 
 
 class ExistingException(exceptions.SentException):
-    def __init__(self, sentMessage: str = "This account already exist on this Mikrotik.", *args: object) -> None:
-        super().__init__(sentMessage, *args)
+    def __init__(self, sentMessage: str = "This account already exist on this Mikrotik.", message = "This account already exist on this Mikrotik.", *args: object) -> None:
+        super().__init__(sentMessage, message, *args)
 
 
 class NoResultException(exceptions.SentException):
     def __init__(self, sentMessage: str = "Tried to create new account Operation has no exceptions.\r\nBut by some reason check new account is not passed\r\nNEED TO MANUAL TESTING CREATION AND BOT FUNCTIONALITY", *args: object) -> None:
-        super().__init__(sentMessage, *args)
+        super().__init__(sentMessage, sentMessage, *args)
 
 
 class CreateAccountException(exceptions.SentException):
@@ -30,13 +30,22 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
         api = connection.get_api()
         secretsApi = api.get_resource('/ppp/secret')
         secretsList = secretsApi.get()
-        for secret in secretsList:
-            if secret['name'] == accountName:
-                raise ExistingException()
+    except Exception as error:
+        raise CreateAccountException(error)
+    finally:
+        connection.disconnect()
+    
+    for secret in secretsList:
+        if secret['name'] == accountName:
+            raise ExistingException()
+    
+    try:
         secretsApi.add(name=accountName, password=password, **
                     configFunctions.GetMikrotikDefaultSettings(mikrotikName))
-        connection.disconnect()
+    except Exception as error:
+        raise CreateAccountException(error)
 
+    try:
         # check creation
         connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
         api = connection.get_api()
@@ -47,14 +56,16 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
                 connection.disconnect()
                 return
         connection.disconnect()
-        raise NoResultException()
     except Exception as error:
-        raise CreateAccountException(args=error)
+        # тут должно подыматься какое-то другое исключение
+        raise CreateAccountException(error)
+    
+    raise NoResultException()
 
 
 class NoAccountException(exceptions.SentException):
     def __init__(self, sentMessage: str = "No such account exists on this Mikrotik", *args: object) -> None:
-        super().__init__(sentMessage, *args)
+        super().__init__(sentMessage, sentMessage, *args)
 
 
 class EditAccountException(exceptions.SentException):
@@ -83,7 +94,7 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
 
                 break
     except Exception as error:
-        raise EditAccountException(args=error)
+        raise EditAccountException(error)
     finally:
         # я не знаю разорвёт ли сборщик мусора соединение
         connection.disconnect()

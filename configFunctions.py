@@ -41,7 +41,8 @@ def GetMailCredentials():
 
 
 class NoMikrotikAliasError(Exception):
-    pass
+    def __init__(self, path: str, *args: object) -> None:
+        super().__init__(f"\"{path}\" doesn't have name of Mikrotik for this alias member.")
 
 
 def GetMikrotikAlias(mikrotikAliasItem) -> str:
@@ -50,7 +51,7 @@ def GetMikrotikAlias(mikrotikAliasItem) -> str:
     for name, alias in zip(mikrotiksAliases.keys(), mikrotiksAliases.values()):
         if mikrotikAliasItem in alias:
             return name
-    raise NoMikrotikAliasError(f"\"{configPaths.mikrotiksAliases}\" doesn't have name of Mikrotik for this alias member.")
+    raise NoMikrotikAliasError(configPaths.mikrotiksAliases)
 
 
 class NoMikrotikNameError(exceptions.SentException):
@@ -58,16 +59,19 @@ class NoMikrotikNameError(exceptions.SentException):
         super().__init__(sentMessage, *args)
 
 
+# классы sendexception не желательно указывать в except, т.к. они предназначены для обработки только внутри errorhandler
+# их следует заменить на что-либо ещё, в чём нет полей, содержимое которых будет отправляться пользователю
+# это делается для разделения исключений, отображающих критические ошибки, и исключений, отображающих неправильный ввод и т.д.
 def GetMikrotikName(mikrotikAliasItem) -> str:
     try:
         return GetMikrotikAlias(mikrotikAliasItem)
-    except (NoMikrotikAliasError, NoConfigError) as error:
+    except (NoMikrotikAliasError, NoConfigError, InvalidConfigError) as error:
         print(error)
         return mikrotikAliasItem
 
 
 class NoPresharedKeyError(exceptions.SentException):
-    def __init__(self, sentMessage: str = "Server doesn\'t have file with preshared keys. Email sending has failed.", *args: object) -> None:
+    def __init__(self, sentMessage: str = "Server doesn\'t have preshared key for this Mikrotik. Email sending has failed.", *args: object) -> None:
         super().__init__(sentMessage, *args)
 
 

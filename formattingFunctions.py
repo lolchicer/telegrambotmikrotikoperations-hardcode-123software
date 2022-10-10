@@ -3,12 +3,18 @@ import exceptions
 
 
 class InvalidCreateMsgWordsFormat(exceptions.SentException):
-    def __init__(self, sentMessage: str = "You should send email and mikrotik name!\r\nExample: /create info@mail.ru reshetnikova", *args: object) -> None:
-        super().__init__(sentMessage, *args)
+    def __init__(self,
+                 sentMessage: str = "You should send email and mikrotik name!\r\nExample: /create info@mail.ru reshetnikova",
+                 message: str = "User should send email and mikrotik name.",
+                 *args: object) -> None:
+        super().__init__(sentMessage, message, *args)
 
 
 class InvalidCreateEmailFormat(exceptions.SentException):
-    def __init__(self, sentMessage: str = "First argument must be the email address.\r\nExample: /create info@mail.ru reshetnikova", *args: object) -> None:
+    def __init__(self,
+                 sentMessage: str = "First argument must be the email address.\r\nExample: /create info@mail.ru reshetnikova",
+                 message: str = "First argument must be the email address.",
+                 *args: object) -> None:
         super().__init__(sentMessage, *args)
 
 
@@ -25,7 +31,7 @@ def ValidateEmail(email):
 def ValidateMsgWords(msgWords: list[str], formattings: list[int]) -> None:
     if len(msgWords) != len(formattings):
         raise InvalidCreateMsgWordsFormat()
-    
+
     for msgWord, formatting in zip(msgWords, formattings):
         if formatting == PLAIN:
             pass

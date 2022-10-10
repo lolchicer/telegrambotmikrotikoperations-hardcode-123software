@@ -85,4 +85,4 @@ def SendEmailToClient(receiverEmail, subject, body):
             server.sendmail(sender_email, receiver_emails, text)
             server.quit()
     except Exception as error:
-        raise CannotSendAccountInfoToClientException(args=error)
+        raise CannotSendAccountInfoToClientException(error)

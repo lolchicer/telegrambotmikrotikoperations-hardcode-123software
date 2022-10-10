@@ -1,14 +1,13 @@
 import configFunctions
 import exceptions
-import mailFunctions
-import mikrotikFunctions
 from telegram import Update
 from telegram.ext import CallbackContext
 from telegram.utils.helpers import escape_markdown
 
 
-class NoPermission(Exception):
-    message = "You don\'t have permissions to do this."
+class NoPermission(exceptions.SentException):
+    def __init__(self, sentMessage: str = "You don\'t have permissions to do this.", message = "User doesn't have permissions to use the bot.", *args: object) -> None:
+        super().__init__(sentMessage, message, *args)
 
 
 def checkPermission(update: Update) -> None:
