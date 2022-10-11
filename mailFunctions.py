@@ -6,10 +6,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-class CannotSendAccountInfoToClientException(exceptions.SentException):
-    def __init__(self, sentMessage: str = "Account is created\r\nBUT\! Some problem was caused with sending email to client.\r\nNEED TO SEND CREDS MANUALY", *args: object) -> None:
-        super().__init__(sentMessage, *args)
-
 def SendAccountInfoToClient(accountName, accountPassword, presharedKey, IP):
     body = f"""Добрый день!
 
@@ -58,31 +54,28 @@ def SendNewPasswordToClient(accountName, accountPassword, IP):
 
 
 def SendEmailToClient(receiverEmail, subject, body):
-    try:
-        smtpCreds = configFunctions.GetMailCredentials()
+    smtpCreds = configFunctions.GetMailCredentials()
 
-        port = 465  # For SSL
-        smtp_server = smtpCreds['smtp_server']
-        sender_email = smtpCreds['sender_email']
-        receiver_emails = [receiverEmail]
-        password = smtpCreds['password']
+    port = 465  # For SSL
+    smtp_server = smtpCreds['smtp_server']
+    sender_email = smtpCreds['sender_email']
+    receiver_emails = [receiverEmail]
+    password = smtpCreds['password']
 
-        message = MIMEMultipart()
-        message["From"] = sender_email
-        message["To"] = ", ".join(receiver_emails)
-        message["Subject"] = subject
-        # message["Bcc"] = receiver_email  # Recommended for mass emails
+    message = MIMEMultipart()
+    message["From"] = sender_email
+    message["To"] = ", ".join(receiver_emails)
+    message["Subject"] = subject
+    # message["Bcc"] = receiver_email  # Recommended for mass emails
 
-        message.attach(MIMEText(body, "plain"))
-        text = message.as_string()
+    message.attach(MIMEText(body, "plain"))
+    text = message.as_string()
 
-        context = ssl.create_default_context()
-        context.check_hostname = False
-        context.verify_mode = ssl.CERT_NONE
+    context = ssl.create_default_context()
+    context.check_hostname = False
+    context.verify_mode = ssl.CERT_NONE
 
-        with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_emails, text)
-            server.quit()
-    except Exception as error:
-        raise CannotSendAccountInfoToClientException(error)
+    with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
+        server.login(sender_email, password)
+        server.sendmail(sender_email, receiver_emails, text)
+        server.quit()

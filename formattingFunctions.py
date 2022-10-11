@@ -2,30 +2,24 @@ import re
 import exceptions
 
 
-class InvalidCreateMsgWordsFormat(exceptions.SentException):
-    def __init__(self,
-                 sentMessage: str = "You should send email and mikrotik name!\r\nExample: /create info@mail.ru reshetnikova",
-                 message: str = "User should send email and mikrotik name.",
-                 *args: object) -> None:
-        super().__init__(sentMessage, message, *args)
+PLAIN = 0
+EMAIL = 2
 
 
 class InvalidCreateEmailFormat(exceptions.SentException):
-    def __init__(self,
-                 sentMessage: str = "First argument must be the email address.\r\nExample: /create info@mail.ru reshetnikova",
-                 message: str = "First argument must be the email address.",
-                 *args: object) -> None:
-        super().__init__(sentMessage, *args)
-
-
-PLAIN = 0
-EMAIL = 2
+    def __init__(self) -> None:
+        super().__init__("First argument must be the email address.\r\nExample: /create info@mail.ru reshetnikova")
 
 
 def ValidateEmail(email):
     regex = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
     if not re.fullmatch(regex, email):
         raise InvalidCreateEmailFormat()
+
+
+class InvalidCreateMsgWordsFormat(exceptions.SentException):
+    def __init__(self) -> None:
+        super().__init__("You should send email and mikrotik name!\r\nExample: /create info@mail.ru reshetnikova")
 
 
 def ValidateMsgWords(msgWords: list[str], formattings: list[int]) -> None:

@@ -6,8 +6,8 @@ from telegram.utils.helpers import escape_markdown
 
 
 class NoPermission(exceptions.SentException):
-    def __init__(self, sentMessage: str = "You don\'t have permissions to do this.", message = "User doesn't have permissions to use the bot.", *args: object) -> None:
-        super().__init__(sentMessage, message, *args)
+    def __init__(self) -> None:
+        super().__init__("You don\'t have permissions to do this.")
 
 
 def checkPermission(update: Update) -> None:
@@ -19,13 +19,15 @@ def checkPermission(update: Update) -> None:
 
 
 def errorHandle(update: Update, context: CallbackContext):
-    error: exceptions.SentException
     error = context.error
     
-    try:
-        sentMessage = error.sentMessage
-    except Exception:
-        sentMessage = "Some exception has thrown.\r\nNEED TO MAINTENANCE THE BOT"
-    finally:
-        update.message.reply_markdown_v2(escape_markdown(sentMessage, version=2))
+    if exceptions.SentException in error.__class__.__bases__:
+        annotatedError: exceptions.SentException
+        annotatedError = error
+        sentMessage = annotatedError.sentMessage
+    else:
         print(error)
+
+        sentMessage = "Some exception has thrown.\r\nNEED TO MAINTENANCE THE BOT"
+    
+    update.message.reply_markdown_v2(escape_markdown(sentMessage, version=2))

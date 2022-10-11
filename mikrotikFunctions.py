@@ -10,67 +10,44 @@ def Connect(mikrotikCredentails):
 
 
 class ExistingException(exceptions.SentException):
-    def __init__(self, sentMessage: str = "This account already exist on this Mikrotik.", message = "This account already exist on this Mikrotik.", *args: object) -> None:
-        super().__init__(sentMessage, message, *args)
+    def __init__(self) -> None:
+        super().__init__("This account already exist on this Mikrotik.")
 
 
 class NoResultException(exceptions.SentException):
-    def __init__(self, sentMessage: str = "Tried to create new account Operation has no exceptions.\r\nBut by some reason check new account is not passed\r\nNEED TO MANUAL TESTING CREATION AND BOT FUNCTIONALITY", *args: object) -> None:
-        super().__init__(sentMessage, sentMessage, *args)
-
-
-class CreateAccountException(exceptions.SentException):
-    def __init__(self, sentMessage: str = "Some exception has thrown when bot try to create and check new account\r\nNEED TO MAINTENANCE THE BOT", *args: object) -> None:
-        super().__init__(sentMessage, *args)
+    def __init__(self) -> None:
+        super().__init__("Tried to create new account Operation has no exceptions.\r\nBut by some reason check new account is not passed\r\nNEED TO MANUAL TESTING CREATION AND BOT FUNCTIONALITY")
 
 
 def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
-    try:
-        connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
-        api = connection.get_api()
-        secretsApi = api.get_resource('/ppp/secret')
-        secretsList = secretsApi.get()
-    except Exception as error:
-        raise CreateAccountException(error)
-    finally:
-        connection.disconnect()
-    
+    connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
+    api = connection.get_api()
+    secretsApi = api.get_resource('/ppp/secret')
+    secretsList = secretsApi.get()
     for secret in secretsList:
         if secret['name'] == accountName:
             raise ExistingException()
-    
-    try:
-        secretsApi.add(name=accountName, password=password, **
-                    configFunctions.GetMikrotikDefaultSettings(mikrotikName))
-    except Exception as error:
-        raise CreateAccountException(error)
+    secretsApi.add(name=accountName, password=password, **
+                configFunctions.GetMikrotikDefaultSettings(mikrotikName))
+    connection.disconnect()
 
-    try:
-        # check creation
-        connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
-        api = connection.get_api()
-        secretsApi = api.get_resource('/ppp/secret')
-        secretsList = secretsApi.get()
-        for secret in secretsList:
-            if secret['name'] == accountName:
-                connection.disconnect()
-                return
-        connection.disconnect()
-    except Exception as error:
-        # тут должно подыматься какое-то другое исключение
-        raise CreateAccountException(error)
+    # check creation
+    connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
+    api = connection.get_api()
+    secretsApi = api.get_resource('/ppp/secret')
+    secretsList = secretsApi.get()
+    for secret in secretsList:
+        if secret['name'] == accountName:
+            connection.disconnect()
+            return
+    connection.disconnect()
     
     raise NoResultException()
 
 
 class NoAccountException(exceptions.SentException):
-    def __init__(self, sentMessage: str = "No such account exists on this Mikrotik", *args: object) -> None:
-        super().__init__(sentMessage, sentMessage, *args)
-
-
-class EditAccountException(exceptions.SentException):
-    def __init__(self, sentMessage: str = "Some exception has thrown when bot try edit the account\r\nNEED TO MAINTENANCE THE BOT", *args: object) -> None:
-        super().__init__(sentMessage, *args)
+    def __init__(self) -> None:
+        super().__init__("No such account exists on this Mikrotik")
 
 
 def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
@@ -80,27 +57,21 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
 
     state = NO_SUCH_SECRET
 
-    try:
-        connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
-        api = connection.get_api()
-        secretsApi = api.get_resource(f'/ppp/secret')
-        secretsList = secretsApi.get()
+    connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
+    api = connection.get_api()
+    secretsApi = api.get_resource(f'/ppp/secret')
+    secretsList = secretsApi.get()
 
-        for secret in secretsList:
-            if secret['name'] == name:
-                secretsApi.set(id=secret['id'], **properties)
+    for secret in secretsList:
+        if secret['name'] == name:
+            secretsApi.set(id=secret['id'], **properties)
+            state = RETURNED
+            break
 
-                state = RETURNED
+    connection.disconnect()
 
-                break
-    except Exception as error:
-        raise EditAccountException(error)
-    finally:
-        # я не знаю разорвёт ли сборщик мусора соединение
-        connection.disconnect()
-
-        if state == NO_SUCH_SECRET:
-            raise NoAccountException()
+    if state == NO_SUCH_SECRET:
+        raise NoAccountException()
 
 
 def DisableASecret(name, mikrotikCredentials) -> None:
