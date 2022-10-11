@@ -59,14 +59,12 @@ def SendEmailToClient(receiverEmail, subject, body):
     port = 465  # For SSL
     smtp_server = smtpCreds['smtp_server']
     sender_email = smtpCreds['sender_email']
-    receiver_emails = [receiverEmail]
     password = smtpCreds['password']
 
     message = MIMEMultipart()
     message["From"] = sender_email
-    message["To"] = ", ".join(receiver_emails)
+    message["To"] = receiverEmail
     message["Subject"] = subject
-    # message["Bcc"] = receiver_email  # Recommended for mass emails
 
     message.attach(MIMEText(body, "plain"))
     text = message.as_string()
@@ -77,5 +75,5 @@ def SendEmailToClient(receiverEmail, subject, body):
 
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
         server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_emails, text)
+        server.sendmail(sender_email, receiverEmail, text)
         server.quit()
