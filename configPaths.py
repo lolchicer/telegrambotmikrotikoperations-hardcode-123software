@@ -5,9 +5,17 @@ presharedKeys = "presharedKeys.json"
 mailCredentials = "mailCredentials.json"
 
 
+MikrotiksCredentials = "Mikrotiks Credentails"
+MikrotiksDefaultSettings = "Mikrotiks Default Settings"
+
+
 def MikrotikCredentials(mikrotikName) -> str:
-    return f"Mikrotiks Credentials/{mikrotikName}.json"
+    return f"{MikrotiksCredentials}/{mikrotikName}.json"
 
 
 def MikrotikDefaultSettings(mikrotikName) -> str:
-    return f"Mikrotiks Default Settings/{mikrotikName}.json"
+    return f"{MikrotiksDefaultSettings}/{mikrotikName}.json"
+
+
+def ConfigTemplates(configName) -> str:
+    return f"Config Templates/{configName}.json"
