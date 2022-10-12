@@ -1,7 +1,7 @@
 import smtplib
 import ssl
 import exceptions
-import configFunctions
+import config
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -54,7 +54,7 @@ def SendNewPasswordToClient(accountName, accountPassword, IP):
 
 
 def SendEmailToClient(receiverEmail, subject, body):
-    smtpCreds = configFunctions.GetMailCredentials()
+    smtpCreds = config.GetMailCredentials()
 
     port = 465  # For SSL
     smtp_server = smtpCreds['smtp_server']

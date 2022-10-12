@@ -1,8 +1,4 @@
-import configFunctions
-import formattingFunctions
-import mailFunctions
-import mikrotikFunctions
-import otherFunctions
+from functions import config, formatting, mail, mikrotik, other
 import errorHandling
 from telegram import Update
 from telegram.ext import CallbackContext
@@ -26,13 +22,13 @@ def connect(update: Update, context: CallbackContext) -> None:
 
     msgWords = update.message.text.split()
 
-    formattingFunctions.ValidateMsgWords(msgWords, [formattingFunctions.PLAIN, formattingFunctions.PLAIN])
+    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.PLAIN])
 
-    mikrotikName = configFunctions.GetMikrotikName(msgWords[1].lower())
+    mikrotikName = config.GetMikrotikName(msgWords[1].lower())
     
-    mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
+    mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
 
-    mikrotikFunctions.Connect(mikrotikCredentials)
+    mikrotik.Connect(mikrotikCredentials)
 
 
 def create(update: Update, context: CallbackContext) -> None:
@@ -40,18 +36,18 @@ def create(update: Update, context: CallbackContext) -> None:
     
     msgWords = update.message.text.split()
 
-    formattingFunctions.ValidateMsgWords(msgWords, [formattingFunctions.PLAIN, formattingFunctions.EMAIL, formattingFunctions.PLAIN])
+    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
 
     newAccountEmail = msgWords[1]
-    newAccountPassword = configFunctions.GeneratePassword20()
-    mikrotikName = configFunctions.GetMikrotikName(msgWords[2].lower())
-    mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
+    newAccountPassword = config.GeneratePassword20()
+    mikrotikName = config.GetMikrotikName(msgWords[2].lower())
+    mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
 
-    mikrotikFunctions.CreateNewSecret(
+    mikrotik.CreateNewSecret(
         newAccountEmail, newAccountPassword, mikrotikName, mikrotikCredentials)
 
-    mailFunctions.SendAccountInfoToClient(
-        newAccountEmail, newAccountPassword, configFunctions.GetPresharedKey(mikrotikName), mikrotikCredentials['host'])
+    mail.SendAccountInfoToClient(
+        newAccountEmail, newAccountPassword, config.GetPresharedKey(mikrotikName), mikrotikCredentials['host'])
 
     update.message.reply_markdown_v2(
         "\!\!\!SUCCESS\!\!\!\r\nAccout is created\. Mail has sended to the Client\.")
@@ -62,16 +58,16 @@ def disable(update: Update, context: CallbackContext) -> None:
 
     msgWords = update.message.text.split()
 
-    formattingFunctions.ValidateMsgWords(msgWords, [formattingFunctions.PLAIN, formattingFunctions.EMAIL, formattingFunctions.PLAIN])
+    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
 
     newAccountEmail = msgWords[1]
-    mikrotikName = configFunctions.GetMikrotikName(msgWords[2].lower())
-    mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
+    mikrotikName = config.GetMikrotikName(msgWords[2].lower())
+    mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
 
-    mikrotikFunctions.DisableASecret(
+    mikrotik.DisableASecret(
         newAccountEmail, mikrotikCredentials)
 
-    mailFunctions.SendDisablingNotificationToClient(
+    mail.SendDisablingNotificationToClient(
         newAccountEmail, mikrotikCredentials['host'])
     
     update.message.reply_markdown_v2("\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\. Mail has sended to the Client\.")
@@ -82,16 +78,16 @@ def enable(update: Update, context: CallbackContext) -> None:
 
     msgWords = update.message.text.split()
 
-    formattingFunctions.ValidateMsgWords(msgWords, [formattingFunctions.PLAIN, formattingFunctions.EMAIL, formattingFunctions.PLAIN])
+    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
 
     accountEmail = msgWords[1]
-    newAccountPassword = otherFunctions.GeneratePassword20()
-    mikrotikName = configFunctions.GetMikrotikName(msgWords[2].lower())
-    mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
+    newAccountPassword = other.GeneratePassword20()
+    mikrotikName = config.GetMikrotikName(msgWords[2].lower())
+    mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
 
-    mikrotikFunctions.EnableASecret(accountEmail, mikrotikCredentials, newAccountPassword)
+    mikrotik.EnableASecret(accountEmail, mikrotikCredentials, newAccountPassword)
 
-    mailFunctions.SendEnablingNotificationToClient(
+    mail.SendEnablingNotificationToClient(
         accountEmail, newAccountPassword, mikrotikCredentials['host'])
 
     update.message.reply_markdown_v2("\!\!\!SUCCESS\!\!\!\r\nAccout is enabled\. Mail has sended to the Client\.")

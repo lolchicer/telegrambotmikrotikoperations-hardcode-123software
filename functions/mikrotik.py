@@ -1,6 +1,6 @@
 import routeros_api
 import exceptions
-import configFunctions
+import config
 
 
 def Connect(mikrotikCredentails):
@@ -28,7 +28,7 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
         if secret['name'] == accountName:
             raise ExistingException()
     secretsApi.add(name=accountName, password=password, **
-                configFunctions.GetMikrotikDefaultSettings(mikrotikName))
+                config.GetMikrotikDefaultSettings(mikrotikName))
     connection.disconnect()
 
     # check creation
