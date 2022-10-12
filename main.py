@@ -1,9 +1,9 @@
 from email import message
 import logging
 import os
-import configFunctions
 import errorHandling
 import commands
+from functions import config
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackContext
 
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def main():
-    botCreds = configFunctions.GetBotCredentials()
+    botCreds = config.GetBotCredentials()
 
     updater = Updater(botCreds['token'])
 
