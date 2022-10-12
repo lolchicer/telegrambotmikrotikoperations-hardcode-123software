@@ -82,3 +82,24 @@ def DisableASecret(name, mikrotikCredentials) -> None:
 def EnableASecret(name, mikrotikCredentials, password) -> None:
     EditSecret(mikrotikCredentials, name, {
                'disabled': 'no', 'password': password})
+
+
+class DisabledError(exceptions.SentException):
+    def __init__(self) -> None:
+        super().__init__('Can\'t edit account because it is disabled.')
+
+
+def SetPassword(name, mikrotikCredentials, password) -> None:
+    connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
+    api = connection.get_api()
+    secretsApi = api.get_resource(f'/ppp/secret')
+    secretsList = secretsApi.get()
+
+    for secret in secretsList:
+        if secret['name'] == name:
+            if secret['disabled'] == 'true':
+                raise DisabledError()
+
+    EditSecret(mikrotikCredentials, name, {'password': password})
+    
+    connection.disconnect()

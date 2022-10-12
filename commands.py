@@ -91,3 +91,22 @@ def enable(update: Update, context: CallbackContext) -> None:
         accountEmail, newAccountPassword, mikrotikCredentials['host'])
 
     update.message.reply_markdown_v2("\!\!\!SUCCESS\!\!\!\r\nAccout is enabled\. Mail has sended to the Client\.")
+
+
+def changePassword(update: Update, context: CallbackContext) -> None:
+    errorHandling.checkPermission(update)
+
+    msgWords = update.message.text.split()
+
+    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
+
+    accountEmail = msgWords[1]
+    newAccountPassword = other.GeneratePassword20()
+    mikrotikName = config.GetMikrotikName(msgWords[2].lower())
+    mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
+
+    mikrotik.SetPassword(accountEmail, mikrotikCredentials, newAccountPassword)
+
+    mail.SendNewPasswordToClient(accountEmail, newAccountPassword, mikrotikCredentials['host'])
+
+    update.message.reply_markdown_v2("\!\!\!SUCCESS\!\!\!\r\nPassword is changed\. Mail has sended to the Client\.")

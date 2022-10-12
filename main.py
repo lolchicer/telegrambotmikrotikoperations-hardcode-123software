@@ -29,6 +29,7 @@ def main():
     dispatcher.add_handler(CommandHandler("create", commands.create))
     dispatcher.add_handler(CommandHandler("disable", commands.disable))
     dispatcher.add_handler(CommandHandler("enable", commands.enable))
+    dispatcher.add_handler(CommandHandler("changepassword", commands.changePassword))
 
     # Start the Bot
     updater.start_polling()
