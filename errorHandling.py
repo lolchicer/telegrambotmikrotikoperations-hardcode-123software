@@ -13,7 +13,7 @@ class NoPermission(exceptions.SentException):
 def checkPermission(update: Update) -> None:
     user = update.effective_user
     
-    autheticatedIds = configFunctions.GetAutheticatedIds()
+    autheticatedIds = config.GetAutheticatedIds()
     if user.id not in autheticatedIds['IDs']:
         raise NoPermission()
 
