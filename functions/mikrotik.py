@@ -1,6 +1,6 @@
 import routeros_api
 import exceptions
-import config
+from . import config
 
 
 def Connect(mikrotikCredentails):
