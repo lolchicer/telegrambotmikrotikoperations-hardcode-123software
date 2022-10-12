@@ -5,7 +5,7 @@ presharedKeys = "presharedKeys.json"
 mailCredentials = "mailCredentials.json"
 
 
-MikrotiksCredentials = "Mikrotiks Credentails"
+MikrotiksCredentials = "Mikrotiks Credentials"
 MikrotiksDefaultSettings = "Mikrotiks Default Settings"
 
 
