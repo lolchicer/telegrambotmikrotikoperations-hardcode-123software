@@ -1,4 +1,4 @@
-import configFunctions
+from functions import config
 import exceptions
 from telegram import Update
 from telegram.ext import CallbackContext
