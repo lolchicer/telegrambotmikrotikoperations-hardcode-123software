@@ -25,7 +25,7 @@ def connect(update: Update, context: CallbackContext) -> None:
     formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.PLAIN])
 
     mikrotikName = config.GetMikrotikName(msgWords[1].lower())
-    
+
     mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
 
     mikrotik.Connect(mikrotikCredentials)
@@ -33,10 +33,11 @@ def connect(update: Update, context: CallbackContext) -> None:
 
 def create(update: Update, context: CallbackContext) -> None:
     errorHandling.checkPermission(update)
-    
+
     msgWords = update.message.text.split()
 
-    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
+    formatting.ValidateMsgWords(
+        msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
 
     newAccountEmail = msgWords[1]
     newAccountPassword = config.GeneratePassword20()
@@ -58,19 +59,30 @@ def disable(update: Update, context: CallbackContext) -> None:
 
     msgWords = update.message.text.split()
 
-    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
+    if len(msgWords) == 4:
+        formatting.ValidateMsgWords(
+            msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN, formatting.PLAIN])
+    else:
+        formatting.ValidateMsgWords(
+            msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
 
     newAccountEmail = msgWords[1]
     mikrotikName = config.GetMikrotikName(msgWords[2].lower())
     mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
 
-    mikrotik.DisableASecret(
-        newAccountEmail, mikrotikCredentials)
+    if len(msgWords) == 4:
+        reason = msgWords[3]
+        mikrotik.DisableASecretWithAReason(
+            newAccountEmail, mikrotikCredentials, reason)
+    else:
+        mikrotik.DisableASecret(
+            newAccountEmail, mikrotikCredentials)
 
     mail.SendDisablingNotificationToClient(
         newAccountEmail, mikrotikCredentials['host'])
-    
-    update.message.reply_markdown_v2("\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\. Mail has sended to the Client\.")
+
+    update.message.reply_markdown_v2(
+        "\!\!\!SUCCESS\!\!\!\r\nAccout is disabled\. Mail has sended to the Client\.")
 
 
 def enable(update: Update, context: CallbackContext) -> None:
@@ -78,19 +90,31 @@ def enable(update: Update, context: CallbackContext) -> None:
 
     msgWords = update.message.text.split()
 
-    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
+    if len(msgWords) == 4:
+        formatting.ValidateMsgWords(
+            msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN, formatting.PLAIN])
+    else:
+        formatting.ValidateMsgWords(
+            msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
 
     accountEmail = msgWords[1]
     newAccountPassword = other.GeneratePassword20()
     mikrotikName = config.GetMikrotikName(msgWords[2].lower())
     mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
 
-    mikrotik.EnableASecret(accountEmail, mikrotikCredentials, newAccountPassword)
+    if len(msgWords) == 4:
+        reason = msgWords[3]
+        mikrotik.EnableASecretWithAReason(
+            accountEmail, mikrotikCredentials, newAccountPassword, reason)
+    else:    
+        mikrotik.EnableASecret(
+            accountEmail, mikrotikCredentials, newAccountPassword)
 
     mail.SendEnablingNotificationToClient(
         accountEmail, newAccountPassword, mikrotikCredentials['host'])
 
-    update.message.reply_markdown_v2("\!\!\!SUCCESS\!\!\!\r\nAccout is enabled\. Mail has sended to the Client\.")
+    update.message.reply_markdown_v2(
+        "\!\!\!SUCCESS\!\!\!\r\nAccout is enabled\. Mail has sended to the Client\.")
 
 
 def changePassword(update: Update, context: CallbackContext) -> None:
@@ -98,7 +122,8 @@ def changePassword(update: Update, context: CallbackContext) -> None:
 
     msgWords = update.message.text.split()
 
-    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
+    formatting.ValidateMsgWords(
+        msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
 
     accountEmail = msgWords[1]
     newAccountPassword = other.GeneratePassword20()
@@ -107,6 +132,8 @@ def changePassword(update: Update, context: CallbackContext) -> None:
 
     mikrotik.SetPassword(accountEmail, mikrotikCredentials, newAccountPassword)
 
-    mail.SendNewPasswordToClient(accountEmail, newAccountPassword, mikrotikCredentials['host'])
+    mail.SendNewPasswordToClient(
+        accountEmail, newAccountPassword, mikrotikCredentials['host'])
 
-    update.message.reply_markdown_v2("\!\!\!SUCCESS\!\!\!\r\nPassword is changed\. Mail has sended to the Client\.")
+    update.message.reply_markdown_v2(
+        "\!\!\!SUCCESS\!\!\!\r\nPassword is changed\. Mail has sended to the Client\.")

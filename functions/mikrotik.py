@@ -1,6 +1,7 @@
 import routeros_api
 import exceptions
 from . import config
+from datetime import datetime
 
 
 def Connect(mikrotikCredentails):
@@ -28,7 +29,7 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
         if secret['name'] == accountName:
             raise ExistingException()
     secretsApi.add(name=accountName, password=password, **
-                config.GetMikrotikDefaultSettings(mikrotikName))
+                   config.GetMikrotikDefaultSettings(mikrotikName))
     connection.disconnect()
 
     # check creation
@@ -41,7 +42,7 @@ def CreateNewSecret(accountName, password, mikrotikName, mikrotikCredentials):
             connection.disconnect()
             return
     connection.disconnect()
-    
+
     raise NoResultException()
 
 
@@ -75,13 +76,33 @@ def EditSecret(mikrotikCredentials, name: str, properties: dict) -> None:
 
 
 def DisableASecret(name, mikrotikCredentials) -> None:
-    EditSecret(mikrotikCredentials, name, {'disabled': 'yes'})
+    nowStrftime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    comment = f"Disabled {nowStrftime}"
+    EditSecret(mikrotikCredentials, name, {
+               'disabled': 'yes', 'comment': comment})
     # возмжоно нужна смена открытого ключа для ppp и рассылка нового всем пользователям ppp по почте
 
 
 def EnableASecret(name, mikrotikCredentials, password) -> None:
+    nowStrftime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    comment = f"Enabled {nowStrftime}"
     EditSecret(mikrotikCredentials, name, {
-               'disabled': 'no', 'password': password})
+               'disabled': 'no', 'password': password, 'comment': comment})
+
+
+def DisableASecretWithAReason(name, mikrotikCredentials, reason) -> None:
+    nowStrftime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    comment = f"Disabled {nowStrftime} because of \"{reason}\""
+    EditSecret(mikrotikCredentials, name, {
+               'disabled': 'yes', 'comment': comment})
+    # возмжоно нужна смена открытого ключа для ppp и рассылка нового всем пользователям ppp по почте
+
+
+def EnableASecretWithAReason(name, mikrotikCredentials, password, reason) -> None:
+    nowStrftime = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    comment = f"Enabled {nowStrftime} because of \"{reason}\""
+    EditSecret(mikrotikCredentials, name, {
+               'disabled': 'no', 'password': password, 'comment': comment})
 
 
 class DisabledError(exceptions.SentException):
@@ -101,5 +122,5 @@ def SetPassword(name, mikrotikCredentials, password) -> None:
                 raise DisabledError()
 
     EditSecret(mikrotikCredentials, name, {'password': password})
-    
+
     connection.disconnect()
