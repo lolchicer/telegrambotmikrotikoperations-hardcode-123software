@@ -1,6 +1,6 @@
 import json
 import exceptions
-import configPaths
+from . import configPaths
 
 
 class NoConfigError(exceptions.SentException):

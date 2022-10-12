@@ -1,6 +1,6 @@
 import smtplib
 import ssl
-import config
+from . import config
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
