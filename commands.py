@@ -137,3 +137,16 @@ def changePassword(update: Update, context: CallbackContext) -> None:
 
     update.message.reply_markdown_v2(
         "\!\!\!SUCCESS\!\!\!\r\nPassword is changed\. Mail has sended to the Client\.")
+
+
+def changePresharedKey(update: Update, context: CallbackContext) -> None:
+    errorHandling.checkPermission(update)
+
+    msgWords = update.message.text.split()
+
+    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.PLAIN])
+
+    mikrotikName = config.GetMikrotikName(msgWords[2].lower())
+    mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
+
+    
