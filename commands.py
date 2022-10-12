@@ -2,6 +2,7 @@ import configFunctions
 import formattingFunctions
 import mailFunctions
 import mikrotikFunctions
+import otherFunctions
 import errorHandling
 from telegram import Update
 from telegram.ext import CallbackContext
@@ -84,7 +85,7 @@ def enable(update: Update, context: CallbackContext) -> None:
     formattingFunctions.ValidateMsgWords(msgWords, [formattingFunctions.PLAIN, formattingFunctions.EMAIL, formattingFunctions.PLAIN])
 
     accountEmail = msgWords[1]
-    newAccountPassword = configFunctions.GeneratePassword20()
+    newAccountPassword = otherFunctions.GeneratePassword20()
     mikrotikName = configFunctions.GetMikrotikName(msgWords[2].lower())
     mikrotikCredentials = configFunctions.GetMikrotikCredentials(mikrotikName)
 
