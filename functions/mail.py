@@ -52,6 +52,16 @@ def SendNewPasswordToClient(accountName, accountPassword, IP):
     return SendEmailToClient(accountName, "Доступ к VPN", body)
 
 
+def SendNewPresharedKeyToClients(accountNames, presharedKey, IP):
+    body = f"""Добрый день!
+    
+Предварительный ключ для проверки подлинности при подключении к VPN по адресу {IP} был изменён:
+    
+{presharedKey}"""
+    for accountName in accountNames:
+        SendEmailToClient(accountName, "Доступ к VPN", body)
+
+
 def SendEmailToClient(receiverEmail, subject, body):
     smtpCreds = config.GetMailCredentials()
 

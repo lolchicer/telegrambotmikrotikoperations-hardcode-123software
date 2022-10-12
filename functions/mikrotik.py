@@ -1,6 +1,7 @@
 import routeros_api
 import exceptions
 from . import config
+from . import formatting
 from datetime import datetime
 
 
@@ -124,3 +125,51 @@ def SetPassword(name, mikrotikCredentials, password) -> None:
     EditSecret(mikrotikCredentials, name, {'password': password})
 
     connection.disconnect()
+
+
+class NoL2tpClientException(exceptions.SentException):
+    def __init__(self) -> None:
+        super().__init__("No such L2TP client exists on this Mikrotik")
+
+
+def SetPresharedKey(mikrotikCredentials, name, presharedKey) -> None:
+    RETURNED = 0
+    NO_SUCH_SECRET = 1
+    ANY = 2
+
+    state = NO_SUCH_SECRET
+
+    connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
+    api = connection.get_api()
+    secretsApi = api.get_resource(f'/interface/l2tp-client')
+    secretsList = secretsApi.get()
+
+    for secret in secretsList:
+        if secret['name'] == name:
+            secretsApi.set(id=secret['id'], **{'ipsec-secret': presharedKey})
+            state = RETURNED
+            break
+
+    connection.disconnect()
+
+    if state == NO_SUCH_SECRET:
+        raise NoL2tpClientException()
+
+
+def GetAllClientsEnabledSecretsNames(mikrotikCredentials) -> list[str]:
+    connection = routeros_api.RouterOsApiPool(**mikrotikCredentials)
+    api = connection.get_api()
+    secretsApi = api.get_resource(f'/ppp/secret')
+    secretsList = secretsApi.get()
+
+    emails = []
+    
+    for secret in secretsList:
+        try:
+            formatting.ValidateEmail(secret['name'])
+            if secret['disabled'] != 'true':
+                emails.append(secret['name'])
+        except Exception:
+            pass
+    
+    return emails

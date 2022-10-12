@@ -84,3 +84,9 @@ def GetPresharedKey(mikrotikName: str) -> str:
         return presharedKeys[mikrotikName]
     except KeyError:
         raise NoPresharedKeyError()
+
+
+def SetPresharedKey(mikrotikName: str, presharedKey: str) -> None:
+    with open(configPaths.presharedKeys) as f:
+        json_data = json.load(f)
+        json_data[mikrotikName] = presharedKey

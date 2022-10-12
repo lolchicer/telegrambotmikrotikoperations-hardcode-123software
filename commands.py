@@ -106,7 +106,7 @@ def enable(update: Update, context: CallbackContext) -> None:
         reason = msgWords[3]
         mikrotik.EnableASecretWithAReason(
             accountEmail, mikrotikCredentials, newAccountPassword, reason)
-    else:    
+    else:
         mikrotik.EnableASecret(
             accountEmail, mikrotikCredentials, newAccountPassword)
 
@@ -144,9 +144,22 @@ def changePresharedKey(update: Update, context: CallbackContext) -> None:
 
     msgWords = update.message.text.split()
 
-    formatting.ValidateMsgWords(msgWords, [formatting.PLAIN, formatting.PLAIN])
+    formatting.ValidateMsgWords(
+        msgWords, [formatting.PLAIN, formatting.PLAIN, formatting.PLAIN])
 
+    newPresharedKey = other.GeneratePassword20()
     mikrotikName = config.GetMikrotikName(msgWords[2].lower())
     mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
+    l2tpClientName = msgWords[1].lower()
 
-    
+    mikrotik.SetPresharedKey(
+        mikrotikCredentials, l2tpClientName, newPresharedKey)
+    config.SetPresharedKey(mikrotikName, newPresharedKey)
+
+    accountEmails = mikrotik.GetAllClientsEnabledSecretsNames(mikrotikCredentials)
+
+    mail.SendNewPresharedKeyToClients(
+        accountEmails, newPresharedKey, mikrotikCredentials['host'])
+
+    update.message.reply_markdown_v2(
+        "\!\!\!SUCCESS\!\!\!\r\nPreshared key is changed\. Mail has sended to the Client\.")
