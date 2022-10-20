@@ -97,7 +97,7 @@ class NoPermission(exceptions.SentException):
         super().__init__("You don\'t have permissions to do this.")
 
 
-def checkPermission(id) -> None:
+def CheckPermission(id) -> None:
     autheticatedIds = GetAutheticatedIds()
     if id not in autheticatedIds['IDs']:
         raise NoPermission()
