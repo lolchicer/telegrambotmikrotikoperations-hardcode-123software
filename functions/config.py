@@ -90,3 +90,14 @@ def SetPresharedKey(mikrotikName: str, presharedKey: str) -> None:
     with open(configPaths.presharedKeys) as f:
         json_data = json.load(f)
         json_data[mikrotikName] = presharedKey
+
+
+class NoPermission(exceptions.SentException):
+    def __init__(self) -> None:
+        super().__init__("You don\'t have permissions to do this.")
+
+
+def checkPermission(id) -> None:
+    autheticatedIds = GetAutheticatedIds()
+    if id not in autheticatedIds['IDs']:
+        raise NoPermission()

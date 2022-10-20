@@ -18,7 +18,7 @@ def myId(update: Update, context: CallbackContext) -> None:
 
 # нужно отправлять что-то со стороны микротика для наглядности
 def connect(update: Update, context: CallbackContext) -> None:
-    errorHandling.checkPermission(update)
+    errorHandling.config.checkPermission(update.effective_user.id)
 
     msgWords = update.message.text.split()
 
@@ -32,7 +32,7 @@ def connect(update: Update, context: CallbackContext) -> None:
 
 
 def create(update: Update, context: CallbackContext) -> None:
-    errorHandling.checkPermission(update)
+    errorHandling.config.checkPermission(update.effective_user.id)
 
     msgWords = update.message.text.split()
 
@@ -55,7 +55,7 @@ def create(update: Update, context: CallbackContext) -> None:
 
 
 def disable(update: Update, context: CallbackContext) -> None:
-    errorHandling.checkPermission(update)
+    errorHandling.config.checkPermission(update.effective_user.id)
 
     msgWords = update.message.text.split()
 
@@ -86,7 +86,7 @@ def disable(update: Update, context: CallbackContext) -> None:
 
 
 def enable(update: Update, context: CallbackContext) -> None:
-    errorHandling.checkPermission(update)
+    errorHandling.config.checkPermission(update.effective_user.id)
 
     msgWords = update.message.text.split()
 
@@ -118,7 +118,7 @@ def enable(update: Update, context: CallbackContext) -> None:
 
 
 def changePassword(update: Update, context: CallbackContext) -> None:
-    errorHandling.checkPermission(update)
+    errorHandling.config.checkPermission(update.effective_user.id)
 
     msgWords = update.message.text.split()
 
@@ -140,7 +140,7 @@ def changePassword(update: Update, context: CallbackContext) -> None:
 
 
 def changePresharedKey(update: Update, context: CallbackContext) -> None:
-    errorHandling.checkPermission(update)
+    errorHandling.config.checkPermission(update.effective_user.id)
 
     msgWords = update.message.text.split()
 

@@ -5,19 +5,6 @@ from telegram.ext import CallbackContext
 from telegram.utils.helpers import escape_markdown
 
 
-class NoPermission(exceptions.SentException):
-    def __init__(self) -> None:
-        super().__init__("You don\'t have permissions to do this.")
-
-
-def checkPermission(update: Update) -> None:
-    user = update.effective_user
-    
-    autheticatedIds = config.GetAutheticatedIds()
-    if user.id not in autheticatedIds['IDs']:
-        raise NoPermission()
-
-
 def errorHandle(update: Update, context: CallbackContext):
     error = context.error
     
