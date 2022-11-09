@@ -2,10 +2,10 @@ from functions import config
 import exceptions
 from telegram import Update
 from telegram.ext import CallbackContext
-from telegram.utils.helpers import escape_markdown
+from telegram.helpers import escape_markdown
 
 
-def errorHandle(update: Update, context: CallbackContext):
+async def errorHandle(update: Update, context: CallbackContext):
     error = context.error
     
     if exceptions.SentException in error.__class__.__bases__:
@@ -17,4 +17,4 @@ def errorHandle(update: Update, context: CallbackContext):
 
         sentMessage = "Some exception has thrown.\r\nNEED TO MAINTENANCE THE BOT"
     
-    update.message.reply_markdown_v2(escape_markdown(sentMessage, version=2))
+    await update.message.reply_markdown_v2(escape_markdown(sentMessage, version=2))
