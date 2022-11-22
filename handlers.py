@@ -18,10 +18,13 @@ class QueueHandler(BaseHandler):
         self.handlers = handlers
 
     def check_update(self, update: object) -> Optional[Union[bool, object]]:
-        if self.handlers[self.state].check_update(update):
-            return True
+        if self.state < len(self.handlers):
+            if self.handlers[self.state].check_update(update):
+                return True
+            else:
+                return False
         else:
-            return False
+            self.state = 0
 
 # про рекурсивные объекты:
 #
@@ -37,9 +40,8 @@ class QueueHandler(BaseHandler):
 # если state объекта не будет обновляться лишний раз, баг тоже будет исправлен
 
     async def handle_update(self, update, application, check_result, context):
-        if self.state < len(self.handlers) - 1:
-            await application.update_queue.put(update)
-            self.state += 1
-        else:
-            self.state = 0
-        await self.handlers[self.state - 1].handle_update(update, application, check_result, context)
+        application.create_task(self.handlers[self.state].handle_update(
+            update, application, check_result, context), update)
+
+        await application.update_queue.put(update)
+        self.state += 1
