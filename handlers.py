@@ -12,8 +12,8 @@ class QueueHandler(BaseHandler):
     state: int = 0
     handlers: List[BaseHandler]
 
-    def __init__(self, handlers: List[BaseHandler], block: DVInput[bool] = ...):
-        super().__init__(handlers[0].callback, block)
+    def __init__(self, handlers: List[BaseHandler]):
+        super().__init__(handlers[0].callback)
 
         self.handlers = handlers
 
