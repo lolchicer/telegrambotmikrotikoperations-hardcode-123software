@@ -40,7 +40,7 @@ def create(update: Update, context: CallbackContext) -> None:
         msgWords, [formatting.PLAIN, formatting.EMAIL, formatting.PLAIN])
 
     newAccountEmail = msgWords[1]
-    newAccountPassword = config.GeneratePassword20()
+    newAccountPassword = other.GeneratePassword20()
     mikrotikName = config.GetMikrotikName(msgWords[2].lower())
     mikrotikCredentials = config.GetMikrotikCredentials(mikrotikName)
 
